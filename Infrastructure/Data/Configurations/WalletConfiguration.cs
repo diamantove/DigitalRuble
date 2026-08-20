@@ -26,6 +26,6 @@ public sealed class WalletConfiguration : IEntityTypeConfiguration<Wallet>
             .IsRequired();
 
         builder.Property(wallet => wallet.AccountNumber)
-            .HasMaxLength(34);
+            .HasMaxLength(20);
     }
 }
