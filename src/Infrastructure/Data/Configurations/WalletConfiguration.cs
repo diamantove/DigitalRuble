@@ -21,8 +21,7 @@ public sealed class WalletConfiguration : IEntityTypeConfiguration<Wallet>
             .IsRequired();
 
         builder.HasIndex(wallet => wallet.Code)
-            .IsUnique()
-            .HasFilter("Status <> 'Clsd'");
+            .IsUnique();
 
         builder.Property(wallet => wallet.Status)
             .HasConversion<string>()
