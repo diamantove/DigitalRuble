@@ -16,6 +16,15 @@ public class Wallet
         if (status == WalletStatus.Clsd)
             throw new WalletException("Нельзя создать кошелёк сразу в статусе Clsd.");
 
+        if (status is not (
+                WalletStatus.Prcs
+                or WalletStatus.Actv
+                or WalletStatus.Blck))
+        {
+            throw new WalletException(
+                "При создании допустимы только статусы Prcs, Actv и Blck.");
+        }
+
         Id = Guid.NewGuid();
         Code = code;
         Status = status;
