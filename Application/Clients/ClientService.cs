@@ -1,20 +1,14 @@
 using Application.Abstractions.Data;
 using Application.Clients.Dtos;
+using Application.Exceptions;
 
 namespace Application.Clients;
 
-public sealed class ClientService
+public sealed class ClientService(IClientRepository clientRepository)
 {
-    private readonly IClientRepository _clientRepository;
-
-    public ClientService(IClientRepository clientRepository)
-    {
-        _clientRepository = clientRepository;
-    }
-
     public async Task<IReadOnlyList<ClientListItemDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var clients = await _clientRepository.GetAllAsync(cancellationToken);
+        var clients = await clientRepository.GetAllAsync(cancellationToken);
 
         return clients
             .Select(client => new ClientListItemDto(
@@ -28,12 +22,12 @@ public sealed class ClientService
         string mid,
         CancellationToken cancellationToken)
     {
-        var client = await _clientRepository.GetByMidWithWalletsAsync(
+        var client = await clientRepository.GetByMidWithWalletsAsync(
             mid,
             cancellationToken);
 
         if (client is null)
-            throw new InvalidOperationException($"Клиент с MID '{mid}' не найден.");
+            throw new NotFoundException($"Клиент с MID '{mid}' не найден.");
 
         return client.Wallets
             .Select(wallet => new WalletDto(

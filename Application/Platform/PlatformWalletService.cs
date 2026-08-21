@@ -1,4 +1,5 @@
 using Application.Abstractions.Data;
+using Application.Exceptions;
 using Domain.Common;
 
 namespace Application.Platform;
@@ -29,7 +30,7 @@ public sealed class PlatformWalletService
 
         if (client is null)
         {
-            throw new InvalidOperationException($"Клиент с MID '{request.Mid}' не найден.");
+            throw new NotFoundException($"Клиент с MID '{request.Mid}' не найден.");
         }
 
         var participantIdIsUsed = await _clientRepository.DigitalRubleParticipantIdExistsForAnotherClientAsync(
@@ -96,7 +97,7 @@ public sealed class PlatformWalletService
 
         if (wallet is null)
         {
-            throw new InvalidOperationException($"Кошелёк с кодом '{walletCode}' не найден.");
+            throw new NotFoundException($"Кошелёк с кодом '{walletCode}' не найден.");
         }
 
         if (request.Status is { } status && wallet.Status != status)
