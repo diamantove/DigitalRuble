@@ -4,10 +4,10 @@ using Domain.Wallets;
 namespace Api.Contracts.Platform;
 
 public sealed record UpdatePlatformWalletRequest(
-    [property: EnumDataType(typeof(WalletStatus))]
+    [param: EnumDataType(typeof(WalletStatus))]
     WalletStatus? Status,
 
-    [property: StringLength(20)]
+    [param: StringLength(20)]
     string? AccountNumber) : IValidatableObject
 {
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

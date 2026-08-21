@@ -10,6 +10,9 @@ public sealed class WalletConfiguration : IEntityTypeConfiguration<Wallet>
     {
         builder.HasKey(wallet => wallet.Id);
 
+        builder.Property(wallet => wallet.Id)
+            .ValueGeneratedNever();
+
         builder.Property(wallet => wallet.ClientId)
             .IsRequired();
 

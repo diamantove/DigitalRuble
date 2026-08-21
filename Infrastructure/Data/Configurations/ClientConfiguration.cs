@@ -10,6 +10,9 @@ public sealed class ClientConfiguration : IEntityTypeConfiguration<Client>
     {
         builder.HasKey(client => client.Id);
 
+        builder.Property(client => client.Id)
+            .ValueGeneratedNever();
+
         builder.Property(client => client.Mid)
             .HasMaxLength(100)
             .IsRequired();
