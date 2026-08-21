@@ -11,4 +11,8 @@ public interface IWalletRepository
     Task<Wallet?> GetByCodeAsync(
         string code,
         CancellationToken cancellationToken);
+
+    Task<bool> AccountNumberExistsAsync(
+        string accountNumber,
+        CancellationToken cancellationToken);
 }

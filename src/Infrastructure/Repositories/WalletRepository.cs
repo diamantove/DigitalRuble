@@ -32,4 +32,15 @@ public sealed class WalletRepository : IWalletRepository
                 wallet => wallet.Code == code,
                 cancellationToken);
     }
+
+    public Task<bool> AccountNumberExistsAsync(
+        string accountNumber,
+        CancellationToken cancellationToken)
+    {
+        return _dbContext.Wallets
+            .AsNoTracking()
+            .AnyAsync(
+                wallet => wallet.AccountNumber == accountNumber,
+                cancellationToken);
+    }
 }

@@ -1,6 +1,7 @@
 using Application.Abstractions.Data;
 using Application.Exceptions;
 using Domain.Common;
+using Domain.Wallets;
 
 namespace Application.Platform;
 
@@ -79,6 +80,8 @@ public sealed class PlatformWalletService
 
             if (request.AccountNumber is not null)
             {
+                await EnsureAccountNumberIsAvailableAsync(request.AccountNumber, cancellationToken);
+
                 activeWallet.SetAccountNumber(request.AccountNumber);
             }
         }
@@ -107,10 +110,26 @@ public sealed class PlatformWalletService
 
         if (request.AccountNumber is not null)
         {
+            await EnsureAccountNumberIsAvailableAsync(request.AccountNumber, cancellationToken);
+
             wallet.SetAccountNumber(request.AccountNumber);
         }
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken); 
     }
 
+    private async Task EnsureAccountNumberIsAvailableAsync(
+        string accountNumber,
+        CancellationToken cancellationToken)
+    {
+        var accountNumberExists = await _walletRepository.AccountNumberExistsAsync(
+            accountNumber,
+            cancellationToken);
+
+        if (accountNumberExists)
+        {
+            throw new WalletException(
+                $"Номер счёта '{accountNumber}' уже назначен другому кошельку.");
+        }
+    }
 }

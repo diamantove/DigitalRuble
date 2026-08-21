@@ -30,5 +30,8 @@ public sealed class WalletConfiguration : IEntityTypeConfiguration<Wallet>
 
         builder.Property(wallet => wallet.AccountNumber)
             .HasMaxLength(20);
+
+        builder.HasIndex(wallet => wallet.AccountNumber)
+            .IsUnique();
     }
 }
