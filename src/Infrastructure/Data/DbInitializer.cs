@@ -30,8 +30,10 @@ public static class DbInitializer
 
         sidorov.AddWallet("WALLET-003", WalletStatus.Actv);
 
+        var smirnova = new Client("MID-004", "Смирнова Елена Викторовна");
+
         await dbContext.Clients.AddRangeAsync(
-            [ivanov, petrova, sidorov],
+            [ivanov, petrova, sidorov, smirnova],
             cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
