@@ -22,17 +22,6 @@ public static class DependencyInjection
         services.AddProblemDetails();
         services.AddExceptionHandler<CustomExceptionHandler>();
 
-        services.AddCors(options =>
-{
-        options.AddPolicy("Frontend", policy =>
-            {
-                policy
-                    .WithOrigins("http://localhost:5500")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
-
         return services;
     }
 
@@ -46,7 +35,8 @@ public static class DependencyInjection
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
 
-        app.UseCors("Frontend");
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
 
         app.UseAuthorization();
 

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Кошельки цифрового рубля</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="page">
+        <header class="header">
+            <div>
+                <h1>Кошельки клиентов</h1>
+                <p>Работа с цифровыми кошельками</p>
+            </div>
+            <button id="refreshClients" type="button">Обновить список</button>
+        </header>
+
+        <div id="message" class="message" hidden></div>
+
+        <div class="layout">
+            <section class="card clients-card">
+                <h2>Клиенты <span id="clientCount">0</span></h2>
+                <div id="clients">Загрузка клиентов...</div>
+            </section>
+
+            <section class="content">
+                <div id="emptyState" class="card empty-state">
+                    Выберите клиента из списка.
+                </div>
+
+                <div id="clientDetails" class="card" hidden>
+                    <h2>Данные клиента</h2>
+                    <p><b>MID:</b> <span id="clientMid"></span></p>
+                    <p><b>ФИО:</b> <span id="clientFullName"></span></p>
+                    <p><b>ID цифрового рубля:</b> <span id="participantId"></span></p>
+                </div>
+
+                <div id="walletsCard" class="card" hidden>
+                    <h2>Кошельки клиента</h2>
+                    <div id="wallets">Загрузка кошельков...</div>
+                </div>
+
+                <div id="createWalletCard" class="card" hidden>
+                    <h2>Создать кошелёк</h2>
+                    <form id="createWalletForm">
+                        <label>
+                            Код кошелька
+                            <input name="walletCode" required>
+                        </label>
+                        <label>
+                            Статус
+                            <select name="status">
+                                <option value="Prcs">Prcs — ожидает открытия</option>
+                                <option value="Actv">Actv — активен</option>
+                                <option value="Blck">Blck — заблокирован</option>
+                            </select>
+                        </label>
+                        <label>
+                            Номер счёта (необязательно)
+                            <input name="accountNumber">
+                        </label>
+                        <p id="createWalletHint" class="hint"></p>
+                        <button type="submit">Создать</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

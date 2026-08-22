@@ -1,0 +1,142 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    color: #222;
+    background: #f3f3f3;
+    font-family: Arial, sans-serif;
+}
+
+.page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+h1,
+h2,
+p {
+    margin-top: 0;
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+.header p,
+.hint {
+    color: #666;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+}
+
+.card,
+.message {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.message {
+    color: #9b1c1c;
+    border-color: #c33;
+}
+
+.message.success {
+    color: #246b30;
+    border-color: #3c8c4a;
+}
+
+.empty-state {
+    color: #666;
+    text-align: center;
+}
+
+button,
+input,
+select {
+    padding: 8px;
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.client-button {
+    display: block;
+    width: 100%;
+    margin-bottom: 6px;
+    text-align: left;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+.client-button:hover {
+    background: #eee;
+}
+
+form label {
+    display: block;
+    margin-bottom: 12px;
+}
+
+form input,
+form select {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 8px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid #ddd;
+}
+
+td select,
+td input {
+    width: 100%;
+    margin-top: 6px;
+}
+
+@media (max-width: 700px) {
+    .header,
+    .layout {
+        display: block;
+    }
+
+    .header button {
+        margin-top: 10px;
+    }
+
+    .clients-card {
+        margin-bottom: 20px;
+    }
+}
