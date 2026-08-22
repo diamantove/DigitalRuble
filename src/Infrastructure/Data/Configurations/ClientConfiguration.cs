@@ -21,7 +21,7 @@ public sealed class ClientConfiguration : IEntityTypeConfiguration<Client>
             .IsUnique();
 
         builder.Property(client => client.FullName)
-            .HasMaxLength(300)
+            .HasMaxLength(100)
             .IsRequired();
 
         builder.Property(client => client.DigitalRubleParticipantId)
