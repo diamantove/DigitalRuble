@@ -168,11 +168,11 @@ async function createWallet(event) {
     button.textContent = "Создание...";
 
     const data = {
-        mid: selectedClient.mid,
-        digitalRubleParticipantId: selectedClient.digitalRubleParticipantId,
-        walletCode: code,
-        status: form.elements.status.value,
-        accountNumber: form.elements.accountNumber.value.trim() || null
+      mid: selectedClient.mid,
+      digitalRubleParticipantId: form.elements.digitalRubleParticipantId.value.trim(),
+      walletCode: code,
+      status: form.elements.status.value,
+      accountNumber: form.elements.accountNumber.value.trim() || null,
     };
 
     try {
