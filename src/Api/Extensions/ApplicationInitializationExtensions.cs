@@ -12,7 +12,7 @@ public static class ApplicationInitializationExtensions
         await using var scope = app.Services.CreateAsyncScope();
 
         var dbContext = scope.ServiceProvider
-            .GetRequiredService<DigitalRubDbContext>();
+            .GetRequiredService<ApplicationDbContext>();
 
         await DbInitializer.InitializeAsync(
             dbContext,

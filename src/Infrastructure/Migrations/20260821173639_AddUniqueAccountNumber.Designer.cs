@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Migrations
 {
-    [DbContext(typeof(DigitalRubDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260821173639_AddUniqueAccountNumber")]
     partial class AddUniqueAccountNumber
     {

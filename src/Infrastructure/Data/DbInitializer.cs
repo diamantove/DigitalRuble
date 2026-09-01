@@ -7,7 +7,7 @@ namespace Infrastructure.Data;
 public static class DbInitializer
 {
     public static async Task InitializeAsync(
-        DigitalRubDbContext dbContext,
+        ApplicationDbContext dbContext,
         CancellationToken cancellationToken)
     {
         await dbContext.Database.MigrateAsync(cancellationToken);
