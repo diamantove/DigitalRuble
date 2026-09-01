@@ -46,8 +46,14 @@ public sealed class PlatformWalletService(
                 cancellationToken);
 
             if (walletCodeExists)
-            {
                 throw new WalletException($"Кошелёк с кодом '{request.WalletCode}' уже существует.");
+
+            if (request.AccountNumber is not null)
+            {
+                await EnsureAccountNumberIsAvailableForWalletAsync(
+                    request.AccountNumber,
+                    request.WalletCode,
+                    cancellationToken);
             }
 
             client.AddWallet(
@@ -58,18 +64,17 @@ public sealed class PlatformWalletService(
         else
         {
             if (activeWallet.Code != request.WalletCode)
-            {
-                throw new WalletException("Код активного кошелька не совпадает с кодом, переданным платформой.");
-            }
+                throw new WalletException("Переданный код кошелька не совпадает с кодом активного кошелька.");
 
             if (activeWallet.Status != request.Status)
-            {
                 activeWallet.ChangeStatus(request.Status);
-            }
 
             if (request.AccountNumber is not null)
             {
-                await EnsureAccountNumberIsAvailableAsync(request.AccountNumber, cancellationToken);
+                await EnsureAccountNumberIsAvailableForWalletAsync(
+                    request.AccountNumber,
+                    activeWallet.Code,
+                    cancellationToken);
 
                 activeWallet.SetAccountNumber(request.AccountNumber);
             }
@@ -99,7 +104,7 @@ public sealed class PlatformWalletService(
 
         if (request.AccountNumber is not null)
         {
-            await EnsureAccountNumberIsAvailableAsync(request.AccountNumber, cancellationToken);
+            await EnsureAccountNumberIsAvailableForWalletAsync(request.AccountNumber, wallet.Code, cancellationToken);
 
             wallet.SetAccountNumber(request.AccountNumber);
         }
@@ -107,12 +112,14 @@ public sealed class PlatformWalletService(
         await dbContext.SaveChangesAsync(cancellationToken); 
     }
 
-    private async Task EnsureAccountNumberIsAvailableAsync(
+    private async Task EnsureAccountNumberIsAvailableForWalletAsync(
         string accountNumber,
+        string excludingWalletCode,
         CancellationToken cancellationToken)
     {
-        var accountNumberExists = await walletRepository.AccountNumberExistsAsync(
+        var accountNumberExists = await walletRepository.AccountNumberExistsForAnotherWalletAsync(
             accountNumber,
+            excludingWalletCode,
             cancellationToken);
 
         if (accountNumberExists)

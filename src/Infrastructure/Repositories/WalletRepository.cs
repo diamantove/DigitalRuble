@@ -5,20 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class WalletRepository : IWalletRepository
+public sealed class WalletRepository(ApplicationDbContext dbContext) : IWalletRepository
 {
-    private readonly DigitalRubDbContext _dbContext;
-
-    public WalletRepository(DigitalRubDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public Task<bool> CodeExistsAsync(
         string code,
         CancellationToken cancellationToken)
     {
-        return _dbContext.Wallets
+        return dbContext.Wallets
             .AsNoTracking()
             .AnyAsync(wallet => wallet.Code == code, cancellationToken);
     }
@@ -27,20 +20,22 @@ public sealed class WalletRepository : IWalletRepository
         string code,
         CancellationToken cancellationToken)
     {
-        return _dbContext.Wallets
+        return dbContext.Wallets
             .SingleOrDefaultAsync(
                 wallet => wallet.Code == code,
                 cancellationToken);
     }
 
-    public Task<bool> AccountNumberExistsAsync(
+    public Task<bool> AccountNumberExistsForAnotherWalletAsync(
         string accountNumber,
+        string excludingWalletCode,
         CancellationToken cancellationToken)
     {
-        return _dbContext.Wallets
+        return dbContext.Wallets
             .AsNoTracking()
             .AnyAsync(
-                wallet => wallet.AccountNumber == accountNumber,
+                wallet => wallet.AccountNumber == accountNumber
+                        && wallet.Code != excludingWalletCode,
                 cancellationToken);
     }
 }

@@ -12,7 +12,8 @@ public interface IWalletRepository
         string code,
         CancellationToken cancellationToken);
 
-    Task<bool> AccountNumberExistsAsync(
+    Task<bool> AccountNumberExistsForAnotherWalletAsync(
         string accountNumber,
+        string excludingWalletCode,
         CancellationToken cancellationToken);
 }
