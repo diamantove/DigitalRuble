@@ -7,9 +7,9 @@ namespace Infrastructure.Repositories;
 
 public sealed class ClientRepository : IClientRepository
 {
-    private readonly DigitalRubDbContext _dbContext;
+    private readonly ApplicationDbContext _dbContext;
 
-    public ClientRepository(DigitalRubDbContext dbContext)
+    public ClientRepository(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }

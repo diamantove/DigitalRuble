@@ -5,27 +5,16 @@ using Domain.Wallets;
 
 namespace Application.Platform;
 
-public sealed class PlatformWalletService
-{
-    private readonly IClientRepository _clientRepository;
-    private readonly IWalletRepository _walletRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public PlatformWalletService(
+public sealed class PlatformWalletService(
         IClientRepository clientRepository,
         IWalletRepository walletRepository,
-        IUnitOfWork unitOfWork)
-    {
-        _clientRepository = clientRepository;
-        _walletRepository = walletRepository;
-        _unitOfWork = unitOfWork;
-    }
-
+        IApplicationDbContext dbContext)
+{
     public async Task SyncAsync(
         SyncWalletRequest request,
         CancellationToken cancellationToken)
     {
-        var client = await _clientRepository.GetByMidWithWalletsAsync(
+        var client = await clientRepository.GetByMidWithWalletsAsync(
             request.Mid,
             cancellationToken);
 
@@ -34,7 +23,7 @@ public sealed class PlatformWalletService
             throw new NotFoundException($"Клиент с MID '{request.Mid}' не найден.");
         }
 
-        var participantIdIsUsed = await _clientRepository.DigitalRubleParticipantIdExistsForAnotherClientAsync(
+        var participantIdIsUsed = await clientRepository.DigitalRubleParticipantIdExistsForAnotherClientAsync(
                 request.DigitalRubleParticipantId,
                 client.Id,
                 cancellationToken);
@@ -52,7 +41,7 @@ public sealed class PlatformWalletService
 
         if (activeWallet is null)
         {
-            var walletCodeExists = await _walletRepository.CodeExistsAsync(
+            var walletCodeExists = await walletRepository.CodeExistsAsync(
                 request.WalletCode,
                 cancellationToken);
 
@@ -86,7 +75,7 @@ public sealed class PlatformWalletService
             }
         }
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task UpdateAsync(
@@ -94,7 +83,7 @@ public sealed class PlatformWalletService
         UpdateWalletRequest request,
         CancellationToken cancellationToken)
     {
-        var wallet = await _walletRepository.GetByCodeAsync(
+        var wallet = await walletRepository.GetByCodeAsync(
             walletCode,
             cancellationToken);
 
@@ -115,14 +104,14 @@ public sealed class PlatformWalletService
             wallet.SetAccountNumber(request.AccountNumber);
         }
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken); 
+        await dbContext.SaveChangesAsync(cancellationToken); 
     }
 
     private async Task EnsureAccountNumberIsAvailableAsync(
         string accountNumber,
         CancellationToken cancellationToken)
     {
-        var accountNumberExists = await _walletRepository.AccountNumberExistsAsync(
+        var accountNumberExists = await walletRepository.AccountNumberExistsAsync(
             accountNumber,
             cancellationToken);
 

@@ -16,12 +16,12 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("SqliteConnection")
                 ?? throw new InvalidOperationException("Строка подключения не найдена.");
 
-        services.AddDbContext<DigitalRubDbContext>(options =>
+        services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(connectionString));
 
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IWalletRepository, WalletRepository>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
         return services;
     }
