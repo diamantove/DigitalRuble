@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class WalletRepository(ApplicationDbContext dbContext) : IWalletRepository
+public sealed class WalletRepository(IApplicationDbContext dbContext) : IWalletRepository
 {
     public Task<bool> CodeExistsAsync(
         string code,

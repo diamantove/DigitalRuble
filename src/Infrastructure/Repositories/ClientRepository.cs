@@ -1,22 +1,14 @@
 using Application.Abstractions.Data;
 using Domain.Clients;
-using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public sealed class ClientRepository : IClientRepository
+public sealed class ClientRepository(IApplicationDbContext dbContext) : IClientRepository
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public ClientRepository(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task<IReadOnlyList<Client>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _dbContext.Clients
+        return await dbContext.Clients
             .AsNoTracking()
             .OrderBy(client => client.FullName)
             .ToListAsync(cancellationToken);
@@ -26,7 +18,7 @@ public sealed class ClientRepository : IClientRepository
         string mid,
         CancellationToken cancellationToken)
     {
-        return _dbContext.Clients
+        return dbContext.Clients
             .Include(client => client.Wallets)
             .SingleOrDefaultAsync(client => client.Mid == mid, cancellationToken);
     }
@@ -36,7 +28,7 @@ public sealed class ClientRepository : IClientRepository
         Guid clientId,
         CancellationToken cancellationToken)
     {
-        return _dbContext.Clients
+        return dbContext.Clients
             .AsNoTracking()
             .AnyAsync(
                 client => client.DigitalRubleParticipantId == digitalRubleParticipantId
