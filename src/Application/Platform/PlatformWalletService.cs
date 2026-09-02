@@ -23,19 +23,6 @@ public sealed class PlatformWalletService(
             throw new NotFoundException($"Клиент с MID '{request.Mid}' не найден.");
         }
 
-        var participantIdIsUsed = await clientRepository.DigitalRubleParticipantIdExistsForAnotherClientAsync(
-                request.DigitalRubleParticipantId,
-                client.Id,
-                cancellationToken);
-
-        if (participantIdIsUsed)
-        {
-            throw new ClientException("Идентификатор участника ЦР уже назначен другому клиенту.");
-        }
-
-        client.SetDigitalRubleParticipantId(
-            request.DigitalRubleParticipantId);
-
         var activeWallet = client.Wallets
             .SingleOrDefault(wallet => wallet.IsActive);
 

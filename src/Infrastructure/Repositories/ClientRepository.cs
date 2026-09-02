@@ -24,15 +24,28 @@ public sealed class ClientRepository(IApplicationDbContext dbContext) : IClientR
     }
 
     public Task<bool> DigitalRubleParticipantIdExistsForAnotherClientAsync(
+        string mid,
         string digitalRubleParticipantId,
-        Guid clientId,
         CancellationToken cancellationToken)
     {
         return dbContext.Clients
             .AsNoTracking()
             .AnyAsync(
                 client => client.DigitalRubleParticipantId == digitalRubleParticipantId
-                    && client.Id != clientId,
+                    && client.Mid != mid,
                 cancellationToken);
+    }
+
+    public Task<Client?> GetByMidAsync(string mid, CancellationToken cancellationToken)
+    {
+        return dbContext.Clients
+            .AsNoTracking()
+            .SingleOrDefaultAsync(client => client.Mid == mid, cancellationToken);
+    }
+
+    public Task UpdateAsync(Client client, CancellationToken cancellationToken)
+    {
+        dbContext.Clients.Update(client);
+        return dbContext.SaveChangesAsync(cancellationToken);
     }
 }

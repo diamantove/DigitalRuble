@@ -10,10 +10,6 @@ public sealed record SyncPlatformWalletRequest(
 
     [param: Required]
     [param: StringLength(100)]
-    string DigitalRubleParticipantId,
-
-    [param: Required]
-    [param: StringLength(100)]
     string WalletCode,
 
     [param: Required]

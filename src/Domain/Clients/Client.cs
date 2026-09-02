@@ -7,10 +7,6 @@ public class Client
 {
     private readonly List<Wallet> _wallets = [];
 
-    private Client()
-    {
-    }
-
     public Client(string mid, string fullName)
     {
         if (string.IsNullOrWhiteSpace(mid))
@@ -39,16 +35,7 @@ public class Client
         if (string.IsNullOrWhiteSpace(participantId))
             throw new ClientException("Идентификатор участника ЦР не может быть пустым.");
 
-        if (DigitalRubleParticipantId is null)
-        {
-            DigitalRubleParticipantId = participantId;
-            return;
-        }
-
-        if (DigitalRubleParticipantId != participantId)
-        {
-            throw new ClientException("Идентификатор участника ЦР у клиента уже установлен и не может быть изменён.");
-        }
+        DigitalRubleParticipantId = participantId;
     }
 
     public Wallet AddWallet(string code, WalletStatus status, string? accountNumber = null)

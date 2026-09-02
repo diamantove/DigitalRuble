@@ -16,7 +16,6 @@ public sealed class PlatformWalletsController(PlatformWalletService platformWall
         await platformWalletService.SyncAsync(
             new SyncWalletRequest(
                 request.Mid,
-                request.DigitalRubleParticipantId,
                 request.WalletCode,
                 request.Status!.Value,
                 request.AccountNumber),

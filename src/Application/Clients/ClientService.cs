@@ -1,6 +1,8 @@
+using System.Runtime.CompilerServices;
 using Application.Abstractions.Data;
 using Application.Clients.Dtos;
 using Application.Exceptions;
+using Domain.Common;
 
 namespace Application.Clients;
 
@@ -35,5 +37,30 @@ public sealed class ClientService(IClientRepository clientRepository)
                 wallet.Status,
                 wallet.AccountNumber))
             .ToList();
+    }
+
+    public async Task UpdateDigitalRubleParticipantIdAsync(
+        string mid,
+        string digitalRubleParticipantId,
+        CancellationToken cancellationToken)
+    {
+        var client = await clientRepository.GetByMidAsync(
+            mid,
+            cancellationToken);
+
+        if (client is null)
+            throw new NotFoundException($"Клиент с MID '{mid}' не найден.");
+
+        var participantIdIsUsed = await clientRepository.DigitalRubleParticipantIdExistsForAnotherClientAsync(
+                mid,
+                digitalRubleParticipantId,
+                cancellationToken);
+
+        if (participantIdIsUsed)
+            throw new ClientException("Идентификатор участника ЦР уже назначен другому клиенту.");
+
+        client.SetDigitalRubleParticipantId(digitalRubleParticipantId);
+
+        await clientRepository.UpdateAsync(client, cancellationToken);
     }
 }

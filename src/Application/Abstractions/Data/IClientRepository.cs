@@ -12,6 +12,14 @@ public interface IClientRepository
 
     Task<bool> DigitalRubleParticipantIdExistsForAnotherClientAsync(
         string digitalRubleParticipantId,
-        Guid clientId,
+        string mid,
+        CancellationToken cancellationToken);
+
+    Task<Client?> GetByMidAsync(
+        string mid,
+        CancellationToken cancellationToken);
+
+    Task UpdateAsync(
+        Client client,
         CancellationToken cancellationToken);
 }

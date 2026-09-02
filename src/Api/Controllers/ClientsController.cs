@@ -33,4 +33,18 @@ public sealed class ClientsController(ClientService clientService) : ControllerB
             wallet.Status,
             wallet.AccountNumber)));
     }
+
+    [HttpPut("{mid}")]
+    public async Task<ActionResult> UpdateDigitalRubleParticipantId(
+        string mid,
+        [FromBody] AssignParticipantIdRequest request,
+        CancellationToken cancellationToken)
+    {
+        await clientService.UpdateDigitalRubleParticipantIdAsync(
+            mid,
+            request.DigitalRubleParticipantId,
+            cancellationToken);
+
+        return NoContent();
+    }
 }

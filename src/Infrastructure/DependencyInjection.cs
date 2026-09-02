@@ -21,7 +21,8 @@ public static class DependencyInjection
 
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IWalletRepository, WalletRepository>();
-        services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+        services.AddScoped<IApplicationDbContext>(
+     provider => provider.GetRequiredService<ApplicationDbContext>());
 
         return services;
     }
