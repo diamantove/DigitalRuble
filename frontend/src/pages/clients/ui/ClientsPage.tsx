@@ -6,6 +6,7 @@ import type { Wallet } from '../../../entities/wallet/model/types'
 import { getWallets } from '../../../entities/wallet/model/api/getWallets'
 import { formatAccountNumber } from '../../../entities/wallet/lib/formatAccountNumber'
 import { AssignParticipantIdForm } from '../../../features/assign-participant-id/ui/AssignParticipantIdForm'
+import { UpdateWalletForm } from '../../../features/update-wallet/ui/UpdateWalletForm'
 
 const statusNames: Record<string, string> = {
     prcs: 'Ожидает открытия',
@@ -81,6 +82,21 @@ export function ClientsPage() {
         )
     }
 
+    async function loadWallets(mid: string) {
+        setWallets([])
+        setWalletsError(null)
+        setIsWalletsLoading(true)
+
+        try {
+            const loadedWallets = await getWallets(mid)
+            setWallets(loadedWallets)
+        } catch (error) {
+            setWalletsError(error instanceof Error ? error.message : 'Не удалось загрузить кошельки.')
+        } finally {
+            setIsWalletsLoading(false)
+        }
+    }
+
     if (isLoading) {
         return <main>Загрузка клиентов...</main>
     }
@@ -154,9 +170,15 @@ export function ClientsPage() {
                         <tbody>
                             {wallets.map((wallet) => (
                                 <tr key={wallet.code}>
-                                    <td> key={wallet.code}</td>
+                                    <td> {wallet.code}</td>
                                     <td> {statusNames[wallet.status]}</td>
                                     <td> {formatAccountNumber(wallet.accountNumber)}</td>
+                                    <td>
+                                        <UpdateWalletForm
+                                            wallet={wallet}
+                                            onUpdated={() => loadWallets(selectedClient.mid)}
+                                        />
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

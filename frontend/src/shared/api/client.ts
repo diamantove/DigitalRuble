@@ -111,12 +111,24 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
 }
 
+function requestWithBody<T>(
+    method: 'PUT' | 'PATCH',
+    path: string,
+    body: unknown,
+) {
+    return request<T>(path, {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+    })
+}
+
 export const apiClient = {
     get: <T>(path: string) => request<T>(path),
 
-    put: <T>(path: string, body: unknown) => request<T>(path, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(body)
-    })
+    put: <T>(path: string, body: unknown) => requestWithBody<T>('PUT', path, body),
+
+    patch: <T>(path: string, body: unknown) => requestWithBody<T>('PATCH', path, body),
 }
