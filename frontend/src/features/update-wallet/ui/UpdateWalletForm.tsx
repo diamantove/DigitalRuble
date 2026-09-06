@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Wallet, WalletStatus } from "../../../entities/wallet/model/types"
 import { updateWallet } from "../api/updateWallet";
 import type { SubmitEvent } from 'react';
@@ -8,7 +8,7 @@ type UpdateWalletFormProps = {
     onUpdated: () => Promise<void>
 }
 
-export const statusOptions = [
+const statusOptions = [
     { value: 'prcs', label: 'Ожидает открытия' },
     { value: 'actv', label: 'Активен' },
     { value: 'blck', label: 'Заблокирован' },
@@ -20,11 +20,6 @@ export function UpdateWalletForm({wallet, onUpdated}: UpdateWalletFormProps) {
     const [accountNumber, setAccountNumber] = useState<string>(wallet.accountNumber || '')
     const [error, setError] = useState<string | null>(null)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-
-    useEffect(() => {
-        setAccountNumber(wallet.accountNumber || '')
-        setStatus('') 
-    }, [wallet])
 
     async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault()

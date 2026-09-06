@@ -104,7 +104,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     }
 
     if (error instanceof TypeError) {
-      throw new Error('Не удалось подключиться к API.')
+        throw new Error('Не удалось подключиться к API.', {cause: error})
     }
 
     throw error

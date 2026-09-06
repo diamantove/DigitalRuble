@@ -7,6 +7,7 @@ import { getWallets } from '../../../entities/wallet/model/api/getWallets'
 import { formatAccountNumber } from '../../../entities/wallet/lib/formatAccountNumber'
 import { AssignParticipantIdForm } from '../../../features/assign-participant-id/ui/AssignParticipantIdForm'
 import { UpdateWalletForm } from '../../../features/update-wallet/ui/UpdateWalletForm'
+import { SyncPlatformWalletForm } from '../../../features/sync-platform-wallet/ui/syncPlatformWalletFrom'
 
 const statusNames: Record<string, string> = {
     prcs: 'Ожидает открытия',
@@ -48,19 +49,7 @@ export function ClientsPage() {
 
     async function handleClientSelect(client: Client) {
         setSelectedClient(client);
-        setWallets([]);
-        setWalletsError(null);
-        setIsWalletsLoading(true);
-
-        try {
-            const loadedWallets = await getWallets(client.mid);
-            setWallets(loadedWallets);
-
-        } catch (error) {
-            setWalletsError(error instanceof Error ? error.message : 'Не удалось загрузить кошельки.');
-        } finally {
-            setIsWalletsLoading(false);
-        }
+        await loadWallets(client.mid);
     }
 
     function handleParticipantIdAssigned(participantId: string) {
@@ -147,6 +136,12 @@ export function ClientsPage() {
                     onAssigned={handleParticipantIdAssigned}
                 />
 
+                <SyncPlatformWalletForm
+                    key={selectedClient.mid}
+                    client={selectedClient}
+                    onSynced={() => loadWallets(selectedClient.mid)}
+                />
+
                 <h2>Кошельки клиента</h2>
 
                 {isWalletsLoading && <p>Загрузка кошельков...</p>}
@@ -164,6 +159,7 @@ export function ClientsPage() {
                                 <th>Код</th>
                                 <th>Статус</th>
                                 <th>Номер счёта</th>
+                                <th>Действия</th>
                             </tr>
                         </thead>
                     
