@@ -1,0 +1,1 @@
+export { WalletsTable } from './ui/WalletsTable'

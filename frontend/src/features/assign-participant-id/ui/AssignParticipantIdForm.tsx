@@ -1,12 +1,14 @@
 import { useState, type SubmitEvent } from 'react'
 import { assignParticipantId } from '../api/assignParticipantId'
+import { Fingerprint } from 'lucide-react'
 
 type AssignParticipantIdFormProps = {
     mid: string
     onAssigned: (participantId: string) => void
+    onCancel: () => void
 }
 
-export function AssignParticipantIdForm({mid, onAssigned}: AssignParticipantIdFormProps) {
+export function AssignParticipantIdForm({ mid, onAssigned, onCancel }: AssignParticipantIdFormProps) {
     const [participantId, setParticipantId] = useState('')
     const [error, setError] = useState<string | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -38,22 +40,73 @@ export function AssignParticipantIdForm({mid, onAssigned}: AssignParticipantIdFo
 
     return (
         <form onSubmit={handleSubmit}>
-            <label>
-                ID участника ЦР
-                <input
-                    value={participantId}
-                    onChange={(event) => setParticipantId(event.target.value)}
+            <div className="modal-body">
+                <div className="form-grid">
+                    <div className="form-field">
+                        <label htmlFor="client-form-mid">MID</label>
+
+                        <div className="input-wrap">
+                            <Fingerprint size={15} />
+
+                            <input
+                                id="client-form-mid"
+                                className="locked mono"
+                                value={mid}
+                                readOnly
+                                aria-readonly="true"
+                            />
+                        </div>
+
+                        <div className="readonly-note">
+                            Поле доступно только для чтения.
+                        </div>
+                    </div>
+                    <div className="form-field">
+                        <label htmlFor="client-participant-id">
+                            ID участника ЦР
+                        </label>
+
+                        <div className="input-wrap">
+                            <input
+                                id="client-participant-id"
+                                className="mono"
+                                value={participantId}
+                                onChange={(event) =>
+                                    setParticipantId(event.target.value)
+                                }
+                                disabled={isSubmitting}
+                                maxLength={100}
+                                required
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {error && (
+                    <p className="form-error" role="alert">
+                        {error}
+                    </p>
+                )}
+            </div>
+
+            <div className="modal-foot">
+                <button
+                    className="btn-secondary"
+                    type="button"
+                    onClick={onCancel}
                     disabled={isSubmitting}
-                    maxLength={100}
-                    required
-                />
-            </label>
+                >
+                    Отмена
+                </button>
 
-            <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Сохранение…' : 'Назначить ID'}
-            </button>
-
-            {error && <p role="alert">{error}</p>}
+                <button
+                    className="btn-primary"
+                    type="submit"
+                    disabled={isSubmitting}
+                >
+                    {isSubmitting ? 'Сохранение...' : 'Сохранить'}
+                </button>
+            </div>
         </form>
     )
 }
