@@ -11,7 +11,7 @@ export function ClientsHeader({isRefreshing, apiLabel, onRefresh}: ClientsHeader
         <header className="header">
             <div className="logo">
                 <div className="logo-mark">
-                    <WalletCards size={19} />
+                    <WalletCards size={24} />
                 </div>
 
                 Clients & Wallets
@@ -32,7 +32,7 @@ export function ClientsHeader({isRefreshing, apiLabel, onRefresh}: ClientsHeader
                     onClick={onRefresh}
                 >
                     <RefreshCw
-                        size={17}
+                        size={24}
                         className={isRefreshing ? 'icon-spin' : undefined}
                     />
                 </button>

@@ -54,7 +54,7 @@ export function ClientsSidebar({clients, selectedClient, onSelect}: ClientsSideb
                 </div>
 
                 <label className="search">
-                    <Search size={15} />
+                    <Search size={20} />
 
                     <span className="visually-hidden">
                         Поиск клиента по ФИО или MID

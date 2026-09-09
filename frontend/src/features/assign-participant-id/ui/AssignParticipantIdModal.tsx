@@ -17,6 +17,7 @@ export function AssignParticipantIdModal({client, onClose, onAssigned}: AssignPa
         >
             <AssignParticipantIdForm
                 mid={client.mid}
+                currentParticipantId={client.digitalRubleParticipantId}
                 onAssigned={onAssigned}
                 onCancel={onClose}
             />

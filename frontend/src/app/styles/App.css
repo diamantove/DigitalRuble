@@ -63,3 +63,34 @@
   gap: 8px;
   padding: 16px 20px 20px;
 }
+
+.input-wrap {
+  position: relative;
+}
+
+.input-wrap>svg {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 12px;
+  color: var(--text-muted);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.input-wrap input,
+.input-wrap select {
+  padding-left: 42px;
+}
+
+.form-error {
+  margin-top: 14px;
+  color: #ff9eae;
+  font-size: 12px;
+}
+
+.form-success {
+  margin-top: 14px;
+  color: #8cf0c8;
+  font-size: 12px;
+}

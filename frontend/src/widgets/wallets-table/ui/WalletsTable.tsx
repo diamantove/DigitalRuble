@@ -44,7 +44,7 @@ export function WalletsTable({wallets, isLoading, error, onCreate, onEdit}: Wall
                     type="button"
                     onClick={onCreate}
                 >
-                    <Plus size={15} />
+                    <Plus size={24} />
                     Создать кошелек
                 </button>
             </div>
@@ -110,7 +110,7 @@ export function WalletsTable({wallets, isLoading, error, onCreate, onEdit}: Wall
                                         <td>
                                             <ChevronRight
                                                 className="row-arrow"
-                                                size={16}
+                                                size={22}
                                             />
                                         </td>
                                     </tr>

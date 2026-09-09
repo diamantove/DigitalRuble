@@ -1,14 +1,15 @@
 import { useState, type SubmitEvent } from 'react'
 import { assignParticipantId } from '../api/assignParticipantId'
-import { Fingerprint } from 'lucide-react'
+import { Fingerprint, Landmark } from 'lucide-react'
 
 type AssignParticipantIdFormProps = {
     mid: string
+    currentParticipantId?: string,
     onAssigned: (participantId: string) => void
     onCancel: () => void
 }
 
-export function AssignParticipantIdForm({ mid, onAssigned, onCancel }: AssignParticipantIdFormProps) {
+export function AssignParticipantIdForm({ mid, currentParticipantId, onAssigned, onCancel }: AssignParticipantIdFormProps) {
     const [participantId, setParticipantId] = useState('')
     const [error, setError] = useState<string | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -46,7 +47,7 @@ export function AssignParticipantIdForm({ mid, onAssigned, onCancel }: AssignPar
                         <label htmlFor="client-form-mid">MID</label>
 
                         <div className="input-wrap">
-                            <Fingerprint size={15} />
+                            <Fingerprint size={22} />
 
                             <input
                                 id="client-form-mid"
@@ -67,10 +68,12 @@ export function AssignParticipantIdForm({ mid, onAssigned, onCancel }: AssignPar
                         </label>
 
                         <div className="input-wrap">
+                            <Landmark size={22} />
+
                             <input
                                 id="client-participant-id"
                                 className="mono"
-                                value={participantId}
+                                value={currentParticipantId ?? ''}
                                 onChange={(event) =>
                                     setParticipantId(event.target.value)
                                 }

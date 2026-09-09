@@ -141,8 +141,9 @@ export function ClientsPage() {
 
     if (isLoading) {
         return (
-            <main className="page-state">
-                Загрузка клиентов…
+            <main className="page-state" aria-live="polite">
+                <span className="loading-spinner" aria-hidden="true" />
+                <span>Загрузка клиентов…</span>
             </main>
         )
     }

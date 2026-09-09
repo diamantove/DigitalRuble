@@ -14,7 +14,7 @@ export function ClientSummary({client, onEdit}: ClientSummaryProps) {
             <div className="client-header-row">
                 <div className="client-identity">
                     <div className="identity-icon"> 
-                        <UserRoundCheck size={22} />
+                        <UserRoundCheck size={24} />
                     </div>
 
                     <div>
@@ -29,7 +29,7 @@ export function ClientSummary({client, onEdit}: ClientSummaryProps) {
                         type="button"
                         onClick={onEdit}
                     >
-                        <Pencil size={14} />
+                        <Pencil size={20} />
                         Изменить
                     </button>
                 </div>
@@ -38,7 +38,7 @@ export function ClientSummary({client, onEdit}: ClientSummaryProps) {
             <div className="info-grid">
                 <div className="info-item">
                     <div className="info-label">
-                        <Fingerprint size={13} />
+                        <Fingerprint size={20} />
                         MID
                     </div>
 
@@ -47,7 +47,7 @@ export function ClientSummary({client, onEdit}: ClientSummaryProps) {
 
                 <div className="info-item">
                     <div className="info-label">
-                        <Landmark size={13} />
+                        <Landmark size={20} />
                         Digital Ruble ID
                     </div>
 
