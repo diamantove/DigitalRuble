@@ -8,12 +8,13 @@ import { pluralizeRussian } from '../../../shared/lib/pluralizeRussian'
 type WalletsTableProps = {
     wallets: Wallet[]
     isLoading: boolean
-    error: string | null
+    error: string | null,
+    canCreate: boolean
     onCreate: () => void
     onEdit: (wallet: Wallet) => void
 }
 
-export function WalletsTable({wallets, isLoading, error, onCreate, onEdit}: WalletsTableProps) {
+export function WalletsTable({wallets, isLoading, error, canCreate, onCreate, onEdit}: WalletsTableProps) {
     function handleRowKeyDown(event: React.KeyboardEvent<HTMLTableRowElement>, wallet: Wallet) {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault()
@@ -43,6 +44,12 @@ export function WalletsTable({wallets, isLoading, error, onCreate, onEdit}: Wall
                     className="btn-primary"
                     type="button"
                     onClick={onCreate}
+                    disabled={!canCreate || isLoading}
+                    title={
+                        !canCreate
+                            ? 'Нельзя создать, пока есть не закрытый кошелек'
+                            : undefined
+                    }
                 >
                     <Plus size={24} />
                     Создать кошелек

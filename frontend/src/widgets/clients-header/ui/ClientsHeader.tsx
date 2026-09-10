@@ -2,11 +2,10 @@ import { RefreshCw, WalletCards } from 'lucide-react'
 
 type ClientsHeaderProps = {
     isRefreshing: boolean
-    apiLabel: string
     onRefresh: () => void
 }
 
-export function ClientsHeader({isRefreshing, apiLabel, onRefresh}: ClientsHeaderProps) {
+export function ClientsHeader({isRefreshing, onRefresh}: ClientsHeaderProps) {
     return (
         <header className="header">
             <div className="logo">
@@ -18,11 +17,6 @@ export function ClientsHeader({isRefreshing, apiLabel, onRefresh}: ClientsHeader
             </div>
 
             <div className="header-meta">
-                <div className="api-pill">
-                    <span className="dot" />
-                    <span>{apiLabel}</span>
-                </div>
-
                 <button
                     className="icon-btn"
                     type="button"

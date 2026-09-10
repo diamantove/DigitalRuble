@@ -4,6 +4,7 @@ import { updateWallet } from "../api/updateWallet";
 import type { SubmitEvent } from 'react';
 import { isAllowedWalletStatusTransition } from "../../../entities/wallet/lib/getAllowedWalletStatusTransitions";
 import { getWalletStatusMeta } from "../../../entities/wallet/lib/getWalletStatusMeta";
+import { CreditCard, KeyRound, Activity } from 'lucide-react'
 
 type UpdateWalletFormProps = {
     wallet: Wallet,
@@ -24,9 +25,16 @@ export function UpdateWalletForm({ wallet, onUpdated, onCancel }: UpdateWalletFo
     const [error, setError] = useState<string | null>(null)
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
+    const hasAccountNumber = Boolean(wallet.accountNumber)
+
+    const isChanged =
+        status !== '' &&
+        isAllowedWalletStatusTransition(wallet.status, status) ||
+        accountNumber.trim() !== (wallet.accountNumber || '').trim()
+
     async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault()
-
+            
         const trimmedAccountNumber = accountNumber.trim()
 
         if (!status && !trimmedAccountNumber) {
@@ -68,16 +76,22 @@ export function UpdateWalletForm({ wallet, onUpdated, onCancel }: UpdateWalletFo
             <div className="modal-body">
                 <div className="form-grid">
                     <div className="form-field">
+                        
+
                         <label htmlFor="update-wallet-code">
                             Код кошелька
                         </label>
 
-                        <input
-                            id="update-wallet-code"
-                            className="locked mono"
-                            value={wallet.code}
-                            readOnly
-                        />
+                        <div className="input-wrap">
+                            <KeyRound size={22} aria-hidden="true" />
+
+                            <input
+                                id="update-wallet-code"
+                                className="locked mono"
+                                value={wallet.code}
+                                readOnly
+                            />
+                        </div>
 
                         <div className="readonly-note">
                             Поле доступно только для чтения.
@@ -85,29 +99,33 @@ export function UpdateWalletForm({ wallet, onUpdated, onCancel }: UpdateWalletFo
                     </div>
 
                     <div className="form-field">
+
                         <label htmlFor="update-wallet-status">
                             Статус
                         </label>
 
-                        <select
-                            id="update-wallet-status"
-                            value={status}
-                            onChange={(event) => setStatus(event.target.value as WalletStatus)}
-                            disabled={isSubmitting}
-                        >
-                            <option value="">Не менять статус</option>
+                        <div className="input-wrap">
+                            <Activity size={22} aria-hidden="true" />
 
-                            {statusOptions.map((option) => (
-                                <option
-                                    key={option.value}
-                                    value={option.value}
-                                    disabled={!isAllowedWalletStatusTransition(wallet.status, option.value)}
-                                >
-                                    {option.label}
-                                </option>
-                            ))}
+                            <select
+                                id="update-wallet-status"
+                                value={status}
+                                onChange={(event) => setStatus(event.target.value as WalletStatus)}
+                                disabled={isSubmitting}
+                            >
+                                <option value="">Не менять статус</option>
 
-                        </select>
+                                {statusOptions.map((option) => (
+                                    <option
+                                        key={option.value}
+                                        value={option.value}
+                                        disabled={!isAllowedWalletStatusTransition(wallet.status, option.value)}
+                                    >
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                             <div className="readonly-note">
                                 <p>Текущий статус: {getWalletStatusMeta(wallet.status).label}</p>
                             </div>
@@ -118,14 +136,25 @@ export function UpdateWalletForm({ wallet, onUpdated, onCancel }: UpdateWalletFo
                             Номер счёта
                         </label>
 
-                        <input
-                            id="update-account-number"
-                            className="mono"
-                            value={accountNumber}
-                            onChange={(event) => setAccountNumber(event.target.value)}
-                            disabled={isSubmitting}
-                            maxLength={20}
-                        />
+                        <div className="input-wrap">
+                            <CreditCard size={22} aria-hidden="true" />
+
+                            <input
+                                id="update-account-number"
+                                className={`mono ${hasAccountNumber ? 'locked' : ''}`}
+                                value={accountNumber}
+                                onChange={(event) => setAccountNumber(event.target.value)}
+                                disabled={isSubmitting || hasAccountNumber}
+                                readOnly={hasAccountNumber}
+                                placeholder="Введите номер счёта"
+                                maxLength={20}
+                            />
+                        </div>
+                        {hasAccountNumber && (
+                            <div className="readonly-note">
+                                Номер счёта уже назначен и недоступен для изменения.
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -149,7 +178,7 @@ export function UpdateWalletForm({ wallet, onUpdated, onCancel }: UpdateWalletFo
                 <button
                     className="btn-primary"
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !isChanged}
                 >
                     {isSubmitting ? 'Сохранение...' : 'Сохранить изменения'}
                 </button>

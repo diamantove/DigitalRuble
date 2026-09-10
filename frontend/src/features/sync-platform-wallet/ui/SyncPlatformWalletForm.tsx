@@ -2,6 +2,8 @@ import { useState, type SubmitEvent } from 'react'
 import type { Client } from '../../../entities/client/model/types'
 import type { WalletStatus } from '../../../entities/wallet/model/types'
 import {syncPlatformWallet, type SyncPlatformWalletRequest} from '../api/syncPlatformWallet'
+import { CreditCard, KeyRound, Activity, Fingerprint } from 'lucide-react'
+
 
 type SyncPlatformWalletFormProps = {
     client: Client
@@ -69,65 +71,82 @@ export function SyncPlatformWalletForm({ client, onSynced, onCancel }: SyncPlatf
                 <div className="form-grid">
                     <div className="form-field">
                         <label htmlFor="sync-mid">MID клиента</label>
-                        <input
-                            id="sync-mid"
-                            className="locked mono"
-                            value={client.mid}
-                            readOnly
-                        />
+                        <div className="input-wrap">
+                            <Fingerprint size={20} />
+                            <input
+                                id="sync-mid"
+                                className="locked mono"
+                                value={client.mid}
+                                readOnly
+                                />
+                        </div>
+                        <div className="readonly-note">
+                            Поле доступно только для чтения.
+                        </div>
                     </div>
 
                     <div className="form-field">
                         <label htmlFor="sync-wallet-code">
                             Код кошелька
                         </label>
-                        <input
-                            id="sync-wallet-code"
-                            className="mono"
-                            value={walletCode}
-                            onChange={(event) =>
-                                setWalletCode(event.target.value)
-                            }
-                            maxLength={100}
-                            disabled={isSubmitting}
-                            required
-                        />
+                        <div className="input-wrap">
+                            <KeyRound size={22} aria-hidden="true" />
+
+                            <input
+                                id="sync-wallet-code"
+                                className="mono"
+                                value={walletCode}
+                                onChange={(event) => setWalletCode(event.target.value)}
+                                maxLength={100}
+                                disabled={isSubmitting}
+                                placeholder="Введите код кошелька"
+                                required
+                            />
+                        </div>
                     </div>
 
                     <div className="form-field">
                         <label htmlFor="sync-wallet-status">
                             Статус
                         </label>
-                        <select
-                            id="sync-wallet-status"
-                            value={status}
-                            onChange={(event) =>
-                                setStatus(event.target.value as WalletStatus)
-                            }
-                            disabled={isSubmitting}
-                        >
-                            {statusOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
+
+                        <div className="input-wrap">
+                            <Activity size={22} aria-hidden="true" />
+
+                            <select
+                                id="sync-wallet-status"
+                                value={status}
+                                onChange={(event) =>
+                                    setStatus(event.target.value as WalletStatus)
+                                }
+                                disabled={isSubmitting}
+                            >
+                                {statusOptions.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     <div className="form-field">
                         <label htmlFor="sync-account-number">
                             Номер счёта
                         </label>
-                        <input
-                            id="sync-account-number"
-                            className="mono"
-                            value={accountNumber}
-                            onChange={(event) =>
-                                setAccountNumber(event.target.value)
-                            }
-                            maxLength={20}
-                            disabled={isSubmitting}
-                        />
+                        <div className="input-wrap">
+                            <CreditCard size={22} aria-hidden="true" />
+
+                            <input
+                                id="sync-account-number"
+                                className="mono"
+                                value={accountNumber}
+                                onChange={(event) => setAccountNumber(event.target.value)}
+                                maxLength={20}
+                                disabled={isSubmitting}
+                                placeholder="Введите номер счёта"
+                            />
+                        </div>
                     </div>
                 </div>
 

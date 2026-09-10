@@ -4,15 +4,17 @@ import { Fingerprint, Landmark } from 'lucide-react'
 
 type AssignParticipantIdFormProps = {
     mid: string
-    currentParticipantId?: string,
+    currentParticipantId: string | null,
     onAssigned: (participantId: string) => void
     onCancel: () => void
 }
 
 export function AssignParticipantIdForm({ mid, currentParticipantId, onAssigned, onCancel }: AssignParticipantIdFormProps) {
-    const [participantId, setParticipantId] = useState('')
+    const [participantId, setParticipantId] = useState(currentParticipantId || '')
     const [error, setError] = useState<string | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const isChanged = participantId !== '' && participantId != currentParticipantId
 
     async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -73,7 +75,7 @@ export function AssignParticipantIdForm({ mid, currentParticipantId, onAssigned,
                             <input
                                 id="client-participant-id"
                                 className="mono"
-                                value={currentParticipantId ?? ''}
+                                value={participantId}
                                 onChange={(event) =>
                                     setParticipantId(event.target.value)
                                 }
@@ -105,7 +107,7 @@ export function AssignParticipantIdForm({ mid, currentParticipantId, onAssigned,
                 <button
                     className="btn-primary"
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !isChanged}
                 >
                     {isSubmitting ? 'Сохранение...' : 'Сохранить'}
                 </button>

@@ -36,6 +36,10 @@ export function ClientsPage() {
     const [modal, setModal] = useState<ModalState>({ type: 'none' })
     const [toastMessage, setToastMessage] = useState<string | null>(null)
 
+    const hasOpenWallet = wallets.some(
+        (wallet) => wallet.status !== 'clsd',
+    )
+
     const closeModal = useCallback(() => {
         setModal({ type: 'none' })
     }, [])
@@ -179,7 +183,6 @@ export function ClientsPage() {
         <div className="page">
             <ClientsHeader
                 isRefreshing={isLoading}
-                apiLabel="Подключено к API"
                 onRefresh={() => void handleRefreshClick()}
             />
 
@@ -204,6 +207,7 @@ export function ClientsPage() {
                                 wallets={wallets}
                                 isLoading={isWalletsLoading}
                                 error={walletsError}
+                                canCreate={!hasOpenWallet}
                                 onCreate={() => setModal({ type: 'create-wallet' })}
                                 onEdit={(wallet) =>
                                     setModal({type: 'update-wallet', wallet})
