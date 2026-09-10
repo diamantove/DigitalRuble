@@ -7,7 +7,7 @@ import { CreditCard, KeyRound, Activity, Fingerprint } from 'lucide-react'
 
 type SyncPlatformWalletFormProps = {
     client: Client
-    onSynced: () => Promise<void>
+    onSynced: () => void
     onCancel: () => void
 }
 

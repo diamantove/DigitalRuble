@@ -8,7 +8,7 @@ import { CreditCard, KeyRound, Activity } from 'lucide-react'
 
 type UpdateWalletFormProps = {
     wallet: Wallet,
-    onUpdated: () => Promise<void>
+    onUpdated: () => void
     onCancel: () => void
 }
 

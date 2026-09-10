@@ -5,7 +5,7 @@ import { UpdateWalletForm } from './UpdateWalletForm'
 type UpdateWalletModalProps = {
     wallet: Wallet
     onClose: () => void
-    onUpdated: () => Promise<void>
+    onUpdated: () => void
 }
 
 export function UpdateWalletModal({ wallet, onClose, onUpdated }: UpdateWalletModalProps) {

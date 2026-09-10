@@ -1,9 +1,9 @@
-import {useCallback, useEffect, useState} from 'react'
+import {useCallback, useState} from 'react'
 
-import { getClients } from '../../../entities/client/api/getClients'
 import type { Client } from '../../../entities/client/model/types'
-import { getWallets } from '../../../entities/wallet/model/api/getWallets'
 import type { Wallet } from '../../../entities/wallet/model/types'
+import { clientsQueryKey } from '../../../entities/client/api/useClientsQuery'
+import { walletsQueryKey } from '../../../entities/wallet/api/useWalletsQuery'
 
 import { AssignParticipantIdModal } from '../../../features/assign-participant-id/ui'
 import { SyncPlatformWalletModal } from '../../../features/sync-platform-wallet/ui'
@@ -14,6 +14,9 @@ import { ClientSummary } from '../../../widgets/client-summary'
 import { ClientsHeader } from '../../../widgets/clients-header'
 import { ClientsSidebar } from '../../../widgets/clients-sidebar'
 import { WalletsTable } from '../../../widgets/wallets-table'
+import { useClientsQuery } from '../../../entities/client/api/useClientsQuery'
+import { useWalletsQuery } from '../../../entities/wallet/api/useWalletsQuery'
+import { useQueryClient } from '@tanstack/react-query'
 
 type ModalState =
     | { type: 'none' }
@@ -23,122 +26,69 @@ type ModalState =
         wallet: Wallet }
 
 export function ClientsPage() {
-    const [clients, setClients] = useState<Client[]>([])
-    const [selectedClient, setSelectedClient] = useState<Client | null>(null)
-    const [wallets, setWallets] = useState<Wallet[]>([])
-
-    const [isLoading, setIsLoading] = useState(true)
-    const [isWalletsLoading, setIsWalletsLoading] = useState(false)
-
-    const [error, setError] = useState<string | null>(null)
-    const [walletsError, setWalletsError] = useState<string | null>(null)
-
     const [modal, setModal] = useState<ModalState>({ type: 'none' })
     const [toastMessage, setToastMessage] = useState<string | null>(null)
 
-    const hasOpenWallet = wallets.some(
-        (wallet) => wallet.status !== 'clsd',
-    )
+    const queryClient = useQueryClient()
+
+    const clientsQuery = useClientsQuery()
+    const clients = clientsQuery.data ?? []
+    const [selectedClientMid, setSelectedClientMid] = useState<string | null>(null)
+    const selectedClient =
+        clients.find((client) => client.mid === selectedClientMid) ??
+        clients[0] ??
+        null
+    
+    const walletsQuery = useWalletsQuery(selectedClient?.mid ?? null)
+    const wallets = walletsQuery.data ?? []
+    const isWalletsLoading = walletsQuery.isPending
+    const walletsError = walletsQuery.error?.message ?? null;
+
+    const isLoading = clientsQuery.isPending
+    const error = clientsQuery.error
+    
+    const hasOpenWallet = wallets.some((wallet) => wallet.status !== 'clsd')
 
     const closeModal = useCallback(() => {
         setModal({ type: 'none' })
     }, [])
 
-    const loadWallets = useCallback(async (mid: string) => {
-        setIsWalletsLoading(true)
-        setWalletsError(null)
-        setWallets([])
-
-        try {
-            const loadedWallets = await getWallets(mid)
-            setWallets(loadedWallets)
-        } catch (loadError) {
-            setWalletsError(
-                loadError instanceof Error ? loadError.message: 'Не удалось загрузить кошельки.')
-        } finally {
-            setIsWalletsLoading(false)
-        }
-    }, [])
-
-    const loadClients = useCallback(async () => {
-        try {
-            const loadedClients = await getClients()
-
-            setClients(loadedClients)
-
-            const firstClient = loadedClients[0] ?? null
-            setSelectedClient(firstClient)
-
-            if (firstClient) {
-                await loadWallets(firstClient.mid)
-            } else {
-                setWallets([])
-                setWalletsError(null)
-            }
-        } catch (loadError) {
-            setClients([])
-            setSelectedClient(null)
-            setWallets([])
-
-            setError(loadError instanceof Error ? loadError.message : 'Не удалось загрузить клиентов.')
-        } finally {
-            setIsLoading(false)
-        }
-    }, [loadWallets])
-
-    const handleRefreshClick = async () => {
-        setIsLoading(true)
-        setError(null)
-        await loadClients()
+    async function handleRefreshClick() {
+        await clientsQuery.refetch()
     }
 
-    useEffect(() => {
-        void loadClients()
-    }, [loadClients])
-
-    async function handleClientSelect(client: Client) {
-        setSelectedClient(client)
-        await loadWallets(client.mid)
+    function handleClientSelect(client: Client) {
+        setSelectedClientMid(client.mid)
     }
 
-    function handleParticipantIdAssigned(participantId: string) {
-        if (!selectedClient) {
-            return
-        }
-
-        const updatedClient: Client = {
-            ...selectedClient,
-            digitalRubleParticipantId: participantId,
-        }
-
-        setSelectedClient(updatedClient)
-
-        setClients((currentClients) =>
-            currentClients.map((client) =>
-                client.mid === updatedClient.mid ? updatedClient : client,
-            ),
-        )
+    function handleParticipantIdAssigned() {
+        
+        void queryClient.invalidateQueries({
+            queryKey: clientsQueryKey,
+        })
 
         closeModal()
-        setToastMessage('Digital Ruble Participant ID сохранён.')
+        setToastMessage('ИД цифрого рубля сохранён.')
     }
 
-    async function handleWalletSynced() {
-        if (!selectedClient) {
-            return
+    function handleWalletSynced() {
+        if (selectedClientMid) {
+            void queryClient.invalidateQueries({
+                queryKey: walletsQueryKey(selectedClientMid),
+            })
         }
 
-        await loadWallets(selectedClient.mid)
         closeModal()
         setToastMessage('Кошелек создан.')
     }
 
-    async function handleWalletUpdated() {
-        if (!selectedClient) {
-            return
+    function handleWalletUpdated() {
+        if (selectedClientMid) {
+            void queryClient.invalidateQueries({
+                queryKey: walletsQueryKey(selectedClientMid),
+            })
         }
 
-        await loadWallets(selectedClient.mid)
         closeModal()
         setToastMessage('Кошелек обновлён.')
     }
@@ -157,7 +107,7 @@ export function ClientsPage() {
             <main className="page-state">
                 <h1>Не удалось загрузить клиентов</h1>
 
-                <p role="alert">{error}</p>
+                <p role="alert">{error.message}</p>
 
                 <button
                     className="btn-primary"
@@ -190,7 +140,7 @@ export function ClientsPage() {
                 <ClientsSidebar
                     clients={clients}
                     selectedClient={selectedClient}
-                    onSelect={(client) => void handleClientSelect(client)}
+                    onSelect={handleClientSelect}
                 />
 
                 <main className="main">

@@ -5,7 +5,7 @@ import { SyncPlatformWalletForm } from './SyncPlatformWalletForm'
 type SyncPlatformWalletModalProps = {
     client: Client
     onClose: () => void
-    onSynced: () => Promise<void>
+    onSynced: () => void
 }
 
 export function SyncPlatformWalletModal({client, onClose, onSynced}: SyncPlatformWalletModalProps) {
