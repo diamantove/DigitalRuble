@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "759e84b9-96fd-4632-9abc-d96fd50e6455",
     "name": "Digital Ruble Wallets API",
-    "description": "Коллекция для проверки сценариев из тестового задания. Запускайте запросы из папки «Сценарий: полный жизненный цикл» строго по порядку. Перед повторным прогоном удалите файл Api/digitalrub.db (при остановленном API), чтобы восстановить начальные данные.",
+    "description": "Коллекция для ручной проверки текущего API Clients & Wallets. Запускайте запросы из папки «Полный жизненный цикл кошелька» строго по порядку. Перед повторным прогоном удалите файл backend/Api/digitalrub.db при остановленном API, чтобы восстановить демонстрационные данные.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "43590143"
   },
@@ -110,7 +110,7 @@
       ]
     },
     {
-      "name": "Полный жизненный цикл (по порядку)",
+      "name": "Полный жизненный цикл кошелька (по порядку)",
       "item": [
         {
           "name": "Синхронизировать исходный кошелёк MID-002",
@@ -137,7 +137,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"mid\": \"{{clientMid}}\",\n  \"digitalRubleParticipantId\": \"DRPARTICIPANT-0022\",\n  \"walletCode\": \"{{walletCode}}\",\n  \"status\": \"prcs\"\n}"
+            "raw": "{\n  \"mid\": \"{{clientMid}}\",\n  \"walletCode\": \"{{walletCode}}\",\n  \"status\": \"prcs\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/platform/wallets",
@@ -316,6 +316,39 @@
                 "platform",
                 "wallets",
                 "{{walletCode}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Данные клиента",
+      "item": [
+        {
+          "name": "Назначить или изменить ID участника ЦР для MID-004",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"digitalRubleParticipantId\": \"{{participantId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clients/MID-004",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "clients",
+                "MID-004"
               ]
             }
           },
@@ -511,6 +544,11 @@
     {
       "key": "walletCode",
       "value": "WALLET-002",
+      "type": "string"
+    },
+    {
+      "key": "participantId",
+      "value": "DRPARTICIPANT-004",
       "type": "string"
     }
   ]
