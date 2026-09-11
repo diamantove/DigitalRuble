@@ -16,6 +16,11 @@ public sealed class WalletConfiguration : IEntityTypeConfiguration<Wallet>
         builder.Property(wallet => wallet.ClientId)
             .IsRequired();
 
+        builder.HasIndex(wallet => wallet.ClientId)
+            .HasDatabaseName("IX_Wallets_ClientId_Active")
+            .IsUnique()
+            .HasFilter("\"Status\" IN ('Prcs', 'Actv', 'Blck')");
+
         builder.Property(wallet => wallet.Code)
             .HasMaxLength(100)
             .IsRequired();

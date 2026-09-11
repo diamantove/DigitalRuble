@@ -20,6 +20,12 @@ public sealed class CustomExceptionHandler(ILogger<CustomExceptionHandler> logge
                 exception.Message,
                 LogLevel.Information),
 
+            PersistenceConflictException => (
+                StatusCodes.Status409Conflict,
+                "Конфликт данных.",
+                exception.Message,
+                LogLevel.Warning),
+
             DomainException => (
                 StatusCodes.Status409Conflict,
                 "Нарушено бизнес-правило.",
