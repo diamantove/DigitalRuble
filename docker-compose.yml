@@ -1,0 +1,40 @@
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Database__ApplyMigrations: "true"
+      HttpsRedirection__Enabled: "false"
+      ConnectionStrings__SqliteConnection: "Data Source=/app/data/digitalrub.db"
+    expose:
+      - "8080"
+    volumes:
+      - sqlite_data:/app/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "--fail",
+          "--silent",
+          "http://localhost:8080/health"
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  caddy:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  sqlite_data:

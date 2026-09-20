@@ -35,6 +35,8 @@ public static class DependencyInjection
         services.AddProblemDetails();
         services.AddExceptionHandler<CustomExceptionHandler>();
 
+        services.AddHealthChecks();
+
         return services;
     }
 
@@ -46,9 +48,15 @@ public static class DependencyInjection
         }
 
         app.UseExceptionHandler();
-        app.UseHttpsRedirection();
+
+        if (app.Configuration.GetValue<bool>("HttpsRedirection:Enabled"))
+        {
+            app.UseHttpsRedirection();
+        }
 
         app.UseCors(FrontendPolicyName);
+
+        app.UseHealthChecks("/health");
 
         app.UseAuthorization();
 

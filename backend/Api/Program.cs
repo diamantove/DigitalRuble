@@ -12,7 +12,11 @@ builder.Services
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+var applyMigrations = builder
+            .Configuration
+            .GetValue<bool>("Database:ApplyMigrations");
+
+if (applyMigrations)
 {
     await app.InitializeDatabaseAsync();
 }
