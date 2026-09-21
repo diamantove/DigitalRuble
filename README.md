@@ -26,7 +26,7 @@ docker compose up --build
 - API напрямую наружу не публикуется.
 - Проверить доступность API можно по адресу `http://localhost:8080/health`.
 
-Чтобы остановить контейнеры и сохранить SQLite-данные в Docker volume:
+Чтобы остановить контейнеры и сохранить данные PostgreSQL в Docker volume:
 
 ```powershell
 docker compose down
@@ -43,7 +43,7 @@ docker compose down -v
 ## Обзор
 
 Приложение состоит из одностраничного React-приложения и ASP.NET Core Web API. Интерфейс предоставляет собой поиск по клиентам, просмотр их кошельков и операции оператора: назначение идентификатора участника, создание кошелька и изменение его данных.  
-API отвечает за бизнес-правила и хранит данные в SQLite.
+API отвечает за бизнес-правила и хранит данные в PostgreSQL.
 
 ## Предметная модель
 
@@ -96,7 +96,7 @@ API отвечает за бизнес-правила и хранит данны
 - C# / .NET 10
 - ASP.NET Core Web API
 - Entity Framework Core 10
-- SQLite
+- PostgreSQL
 
 ### Frontend
 
@@ -117,7 +117,7 @@ Backend организован по принципам Clean Architecture.
 Domain содержит бизнес-правила и не зависит от внешних слоёв.  
 Application содержит сценарии использования и абстракции доступа к данным.  
 Api отвечает за HTTP и является точкой композиции приложения  
-Infrastructure реализует доступ к данным через EF Core и SQLite, используя абстракции, объявленные в Application
+Infrastructure реализует доступ к данным через EF Core и PostgreSQL, используя абстракции, объявленные в Application
 
 ```text
                       React (frontend)
@@ -145,7 +145,7 @@ Infrastructure реализует доступ к данным через EF Cor
 └────────────────────────┘               │
                                          |
                                          v
-                                       SQLite
+                                     PostgreSQL
 ```
 
 - **Domain** содержит поведение `Client` и `Wallet`: правила активного кошелька, допустимые переходы статусов и неизменяемость номера счёта.
@@ -217,17 +217,15 @@ npm run dev
 
 ## Конфигурация и база данных
 
-Backend читает именованную строку подключения `SqliteConnection` из `backend/Api/appsettings.json`:
+Backend читает именованную строку подключения `PostgresConnection` из `backend/Api/appsettings.json`:
 
 ```json
 {
   "ConnectionStrings": {
-    "SqliteConnection": "Data Source=digitalrub.db"
+    "PostgresConnection": "Host=localhost;Port=5432;Database=digitalrub;Username=digitalrub;Password=1111"
   }
 }
 ```
-
-`digitalrub.db` создается относительно рабочей директории процесса.
 
 В Development миграции применяются автоматически при запуске приложения. При необходимости миграции можно применить вручную:
 
