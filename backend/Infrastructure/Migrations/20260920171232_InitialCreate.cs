@@ -15,10 +15,10 @@ namespace Infrastructure.Migrations
                 name: "Clients",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Mid = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    FullName = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false),
-                    DigitalRubleParticipantId = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Mid = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    FullName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    DigitalRubleParticipantId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -29,11 +29,11 @@ namespace Infrastructure.Migrations
                 name: "Wallets",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ClientId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Code = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Status = table.Column<string>(type: "TEXT", maxLength: 4, nullable: false),
-                    AccountNumber = table.Column<string>(type: "TEXT", maxLength: 20, nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Status = table.Column<string>(type: "character varying(4)", maxLength: 4, nullable: false),
+                    AccountNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -59,9 +59,17 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Wallets_ClientId",
+                name: "IX_Wallets_AccountNumber",
                 table: "Wallets",
-                column: "ClientId");
+                column: "AccountNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wallets_ClientId_Active",
+                table: "Wallets",
+                column: "ClientId",
+                unique: true,
+                filter: "\"Status\" IN ('Prcs', 'Actv', 'Blck')");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Wallets_Code",

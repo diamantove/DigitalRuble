@@ -3,8 +3,8 @@ using Application.Abstractions.Data;
 using Application.Exceptions;
 using Domain.Clients;
 using Domain.Wallets;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Infrastructure.Data;
 
@@ -40,10 +40,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     private static bool IsUniqueConstraintViolation(DbUpdateException exception)
     {
-        var sqliteException = exception.InnerException as SqliteException;
-
-        return sqliteException is not null
-            && sqliteException.SqliteErrorCode == 19
-            && sqliteException.SqliteExtendedErrorCode == 2067;
+        return exception.InnerException is PostgresException postgresException &&
+               postgresException.SqlState == PostgresErrorCodes.UniqueViolation;
     }
 }
