@@ -3,12 +3,16 @@ using Application.Abstractions.Data;
 using Application.Exceptions;
 using Domain.Clients;
 using Domain.Wallets;
+using Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace Infrastructure.Data;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IApplicationDbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<CustomIdentityUser, IdentityRole<Guid>, Guid>(options), IApplicationDbContext
 {
     public DbSet<Client> Clients => Set<Client>();
 

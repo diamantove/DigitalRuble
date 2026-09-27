@@ -1,0 +1,53 @@
+using Application.Abstractions.Identity;
+using Application.Identity;
+using Microsoft.AspNetCore.Identity;
+
+namespace Infrastructure.Identity;
+
+public sealed class IdentityAuthenticationService(
+    UserManager<CustomIdentityUser> userManager,
+    SignInManager<CustomIdentityUser> signInManager)
+    : IAuthenticationService
+{
+    public async Task<bool> SignInAsync(string email, string password)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+
+        if (user is null)
+        {
+            return false;
+        }
+
+        var result = await signInManager.PasswordSignInAsync(
+            user,
+            password,
+            isPersistent: false,
+            lockoutOnFailure: true);
+
+        return result.Succeeded;
+    }
+
+    public Task SignOutAsync()
+    {
+        return signInManager.SignOutAsync();
+    }
+
+    public async Task<CurrentUserDto?> GetCurrentUserAsync(Guid userId)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+
+        if (user is null)
+        {
+            return null;
+        }
+
+        var roles = await userManager.GetRolesAsync(user);
+
+        return new CurrentUserDto(
+            user.Id,
+            user.Email ?? string.Empty,
+            user.DisplayName,
+            user.Status,
+            roles.ToArray());
+    }
+}

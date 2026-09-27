@@ -22,6 +22,12 @@ services:
       Database__ApplyMigrations: "true"
       HttpsRedirection__Enabled: "false"
       ConnectionStrings__PostgresConnection: "Host=postgres;Port=5432;Database=digitalrub;Username=digitalrub;Password=${POSTGRES_PASSWORD}"
+
+      Identity__SeedAdmin__Enabled: ${ADMIN_SEED_ENABLED}
+      Identity__SeedAdmin__Email: ${ADMIN_EMAIL}
+      Identity__SeedAdmin__Password: ${ADMIN_PASSWORD}
+      Identity__SeedAdmin__DisplayName: ${ADMIN_DISPLAY_NAME}
+
     expose:
       - "8080"
     depends_on:

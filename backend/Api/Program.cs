@@ -6,19 +6,17 @@ using Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddApiServices()
+    .AddApiServices(builder.Environment)
     .AddInfrastructureServices(builder.Configuration)
     .AddApplicationServices();
 
 var app = builder.Build();
 
-var applyMigrations = builder
-            .Configuration
-            .GetValue<bool>("Database:ApplyMigrations");
+var applyMigrations = builder.Configuration.GetValue<bool>("Database:ApplyMigrations");
 
 if (applyMigrations)
 {
-    await app.InitializeDatabaseAsync();
+    await app.InitializeDatabaseAsync(builder.Configuration, builder.Environment);
 }
 
 app.UseApiServices();
