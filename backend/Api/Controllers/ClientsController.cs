@@ -1,11 +1,13 @@
 using Api.Contracts.Clients;
 using Application.Clients;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+[Authorize(Policy = "OperatorAccess")]
 [ApiController]
-[Route("api/clients")]
+[Route("api/operator/clients")]
 public sealed class ClientsController(ClientService clientService) : ControllerBase
 {
     [HttpGet]

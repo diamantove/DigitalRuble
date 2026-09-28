@@ -1,7 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Api.Exceptions.Handlers;
+using Api.Middleware;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi;
 
 namespace Api;
 
@@ -37,14 +39,9 @@ public static class DependencyInjection
         services
             .AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme =
-                    IdentityConstants.ApplicationScheme;
-
-                options.DefaultSignInScheme =
-                    IdentityConstants.ApplicationScheme;
-
-                options.DefaultChallengeScheme =
-                    IdentityConstants.ApplicationScheme;
+                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
             })
             .AddCookie(IdentityConstants.ApplicationScheme, options =>
             {
@@ -70,9 +67,57 @@ public static class DependencyInjection
                 };
             });
 
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("OperatorAccess", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole("Operator", "Admin");
+            });
+        });
 
-        services.AddOpenApi();
+        services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer((document, _, _) =>
+            {
+                document.Components ??= new OpenApiComponents();
+                document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+
+                document.Components.SecuritySchemes["PlatformApiKey"] = new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    Name = "X-Api-Key",
+                    In = ParameterLocation.Header,
+                    Description = "API key для platform API."
+                };
+
+                foreach (var (path, pathItem) in document.Paths)
+                {
+                    if (!path.StartsWith("/api/platform/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    if (pathItem.Operations is null)
+                    {
+                        continue;
+                    }
+
+                    foreach (var operation in pathItem.Operations.Values)
+                    {
+                        operation.Security ??= [];
+
+                        operation.Security.Add(new OpenApiSecurityRequirement
+                        {
+                            [new OpenApiSecuritySchemeReference("PlatformApiKey", document)] = []
+                        });
+                    }
+                }
+
+                return Task.CompletedTask;
+            });
+        });
+
         services.AddProblemDetails();
         services.AddExceptionHandler<CustomExceptionHandler>();
 
@@ -104,6 +149,8 @@ public static class DependencyInjection
         app.UseCors(FrontendPolicyName);
 
         app.UseHealthChecks("/health");
+
+        app.UseMiddleware<PlatformApiKeyMiddleware>();
 
         app.UseAuthentication();
         app.UseAuthorization();

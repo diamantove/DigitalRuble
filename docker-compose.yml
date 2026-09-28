@@ -27,6 +27,7 @@ services:
       Identity__SeedAdmin__Email: ${ADMIN_EMAIL}
       Identity__SeedAdmin__Password: ${ADMIN_PASSWORD}
       Identity__SeedAdmin__DisplayName: ${ADMIN_DISPLAY_NAME}
+      PLATFORM__ApiKeyHash: ${PLATFORM_API_KEY_HASH}
 
     expose:
       - "8080"

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Domain.Wallets;
 
-namespace Api.Contracts.Platform;
+namespace Api.Contracts.Wallets.Platform;
 
 public sealed record UpdatePlatformWalletRequest(
     [param: EnumDataType(typeof(WalletStatus))]

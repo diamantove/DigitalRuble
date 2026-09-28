@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using Domain.Wallets;
 
-namespace Api.Contracts.Platform;
+namespace Api.Contracts.Wallets.Operator;
 
-public sealed record SyncPlatformWalletRequest(
+public sealed record SyncOperatorWalletRequest(
     [param: Required]
     [param: StringLength(100)]
     string Mid,
