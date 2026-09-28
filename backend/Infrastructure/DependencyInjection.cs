@@ -3,7 +3,6 @@ using Application.Abstractions.Identity;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -43,6 +42,7 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext>(
             provider => provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IAuthenticationService, IdentityAuthenticationService>();
+        services.AddScoped<IUserAccessService, IdentityUserAccessService>();
 
         return services;
     }

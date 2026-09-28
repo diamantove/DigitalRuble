@@ -80,8 +80,7 @@ public static class IdentitySeeder
             UserName = email,
             Email = email,
             EmailConfirmed = true,
-            DisplayName = displayName,
-            Status = "Active"
+            DisplayName = displayName
         };
 
         var createResult = await userManager.CreateAsync(user, password);

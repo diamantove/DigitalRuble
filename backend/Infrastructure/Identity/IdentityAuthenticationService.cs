@@ -47,7 +47,6 @@ public sealed class IdentityAuthenticationService(
             user.Id,
             user.Email ?? string.Empty,
             user.DisplayName,
-            user.Status,
             roles.ToArray());
     }
 }
