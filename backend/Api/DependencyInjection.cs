@@ -13,13 +13,18 @@ public static class DependencyInjection
 
     public static IServiceCollection AddApiServices(
         this IServiceCollection services,
-        IHostEnvironment environment)
+        IHostEnvironment environment,
+        IConfiguration configuration)
     {
+        var allowedOrigins = configuration
+                .GetSection("AllowedOrigins")
+                .Get<string[]>() ?? [];
+
         services.AddCors(options =>
         {
             options.AddPolicy(FrontendPolicyName, policy =>
             {
-                policy.WithOrigins("http://localhost:5173")
+                policy.WithOrigins(allowedOrigins)
                       .AllowAnyHeader()
                       .AllowAnyMethod()
                       .AllowCredentials();
