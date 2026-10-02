@@ -1,4 +1,4 @@
-namespace Application.Identity;
+namespace Application.Abstractions.Users.Dto;
 
 public sealed record CurrentUserDto(
     Guid Id,

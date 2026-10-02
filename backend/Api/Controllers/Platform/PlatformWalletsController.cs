@@ -1,25 +1,22 @@
-using Api.Contracts.Wallets.Operator;
+using Api.Contracts.Wallets.Platform;
 using Application.Platform;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers;
+namespace Api.Controllers.Platform;
 
-[Authorize(Policy = "OperatorAccess")]
+
 [ApiController]
-[Route("api/operator")]
-public sealed class OperatorWalletsController(
-    PlatformWalletService platformWalletService) : ControllerBase
+[Route("api/platform/wallets")]
+public sealed class PlatformWalletsController(PlatformWalletService platformWalletService) : ControllerBase
 {
-    [HttpPut("clients/{mid}/wallets")]
+    [HttpPut]
     public async Task<IActionResult> Sync(
-        string mid,
-        SyncOperatorWalletRequest request,
+        [FromBody] SyncPlatformWalletRequest request,
         CancellationToken cancellationToken)
     {
         await platformWalletService.SyncAsync(
             new SyncWalletRequest(
-                mid,
+                request.Mid,
                 request.WalletCode,
                 request.Status!.Value,
                 request.AccountNumber),
@@ -28,10 +25,10 @@ public sealed class OperatorWalletsController(
         return NoContent();
     }
 
-    [HttpPatch("wallets/{walletCode}")]
+    [HttpPatch("{walletCode}")]
     public async Task<IActionResult> Update(
         string walletCode,
-        UpdateOperatorWalletRequest request,
+        [FromBody] UpdatePlatformWalletRequest request,
         CancellationToken cancellationToken)
     {
         await platformWalletService.UpdateAsync(

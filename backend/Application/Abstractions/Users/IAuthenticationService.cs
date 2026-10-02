@@ -1,6 +1,6 @@
-using Application.Identity;
+using Application.Abstractions.Users.Dto;
 
-namespace Application.Abstractions.Identity;
+namespace Application.Abstractions.Users;
 
 public interface IAuthenticationService
 {

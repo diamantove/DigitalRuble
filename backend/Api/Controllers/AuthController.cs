@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Api.Contracts.Auth;
-using Application.Abstractions.Identity;
-using Application.Identity;
+using Application.Abstractions.Users;
+using Application.Abstractions.Users.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

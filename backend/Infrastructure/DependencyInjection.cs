@@ -1,5 +1,5 @@
 using Application.Abstractions.Data;
-using Application.Abstractions.Identity;
+using Application.Abstractions.Users;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Infrastructure.Repositories;
@@ -42,7 +42,7 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext>(
             provider => provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IAuthenticationService, IdentityAuthenticationService>();
-        services.AddScoped<IUserAccessService, IdentityUserAccessService>();
+        services.AddScoped<IUserManagementService, IdentityUserManagementService>();
 
         return services;
     }

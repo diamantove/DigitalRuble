@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using Domain.Wallets;
 
-namespace Api.Contracts.Wallets.Operator;
+namespace Api.Contracts.Wallets.Admin;
 
-public sealed record UpdateOperatorWalletRequest(
+public sealed record UpdateAdminWalletRequest(
     [param: EnumDataType(typeof(WalletStatus))]
     WalletStatus? Status,
 

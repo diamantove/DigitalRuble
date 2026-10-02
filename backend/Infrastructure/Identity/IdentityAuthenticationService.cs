@@ -1,5 +1,5 @@
-using Application.Abstractions.Identity;
-using Application.Identity;
+using Application.Abstractions.Users;
+using Application.Abstractions.Users.Dto;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Identity;

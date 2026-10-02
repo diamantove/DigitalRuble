@@ -74,10 +74,16 @@ public static class DependencyInjection
 
         services.AddAuthorization(options =>
         {
-            options.AddPolicy("OperatorAccess", policy =>
+            options.AddPolicy("OperatorReadAccess", policy =>
             {
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole("Operator", "Admin");
+            });
+
+            options.AddPolicy("AdminAccess", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireRole("Admin");
             });
         });
 

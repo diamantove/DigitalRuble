@@ -3,11 +3,11 @@ using Application.Clients;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers;
+namespace Api.Controllers.Operator;
 
-[Authorize(Policy = "OperatorAccess")]
 [ApiController]
 [Route("api/operator/clients")]
+[Authorize(Policy = "OperatorReadAccess")]
 public sealed class ClientsController(ClientService clientService) : ControllerBase
 {
     [HttpGet]
@@ -34,19 +34,5 @@ public sealed class ClientsController(ClientService clientService) : ControllerB
             wallet.Code,
             wallet.Status,
             wallet.AccountNumber)));
-    }
-
-    [HttpPut("{mid}")]
-    public async Task<ActionResult> UpdateDigitalRubleParticipantId(
-        string mid,
-        [FromBody] AssignParticipantIdRequest request,
-        CancellationToken cancellationToken)
-    {
-        await clientService.UpdateDigitalRubleParticipantIdAsync(
-            mid,
-            request.DigitalRubleParticipantId,
-            cancellationToken);
-
-        return NoContent();
     }
 }

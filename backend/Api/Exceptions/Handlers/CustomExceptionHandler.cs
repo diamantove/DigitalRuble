@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Exceptions.Handlers;
 
-public sealed class CustomExceptionHandler(ILogger<CustomExceptionHandler> logger) : IExceptionHandler
+public sealed class CustomExceptionHandler(ILogger<CustomExceptionHandler> logger)
+ : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
@@ -14,21 +15,33 @@ public sealed class CustomExceptionHandler(ILogger<CustomExceptionHandler> logge
     {
         var (statusCode, title, detail, logLevel) = exception switch
         {
+            ForbiddenException => (
+                StatusCodes.Status403Forbidden,
+                "Доступ запрещен.",
+                exception.Message,
+                LogLevel.Information),
+
             NotFoundException => (
                 StatusCodes.Status404NotFound,
-                "Ресурс не найден.",
+                "Объект не найден.",
+                exception.Message,
+                LogLevel.Information),
+
+            UserAlreadyExistsException => (
+                StatusCodes.Status409Conflict,
+                "Пользователь уже существует.",
                 exception.Message,
                 LogLevel.Information),
 
             PersistenceConflictException => (
                 StatusCodes.Status409Conflict,
-                "Конфликт данных.",
+                "Ошибка сохранения данных.",
                 exception.Message,
                 LogLevel.Warning),
 
             DomainException => (
                 StatusCodes.Status409Conflict,
-                "Нарушено бизнес-правило.",
+                "Ошибка бизнес-логики.",
                 exception.Message,
                 LogLevel.Warning),
 
