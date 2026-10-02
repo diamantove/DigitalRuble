@@ -33,10 +33,7 @@ public sealed class AdminUsersController(IUserManagementService userManagementSe
     [HttpPatch("{userId:guid}/block")]
     public async Task<IActionResult> Block(Guid userId)
     {
-        var blocked = await userManagementService.BlockAsync(userId);
-
-        if (!blocked)
-            return NotFound();
+        await userManagementService.BlockAsync(userId);
 
         return NoContent();
     }

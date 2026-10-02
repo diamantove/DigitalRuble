@@ -11,7 +11,7 @@ public interface IUserManagementService
         string email,
         string password,
         string displayName);
-    Task<bool> BlockAsync(Guid userId);
+    Task BlockAsync(Guid userId);
 
-    Task<bool> UnblockAsync(Guid userId);
+    Task UnblockAsync(Guid userId);
 }

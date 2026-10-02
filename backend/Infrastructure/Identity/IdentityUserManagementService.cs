@@ -65,7 +65,7 @@ public sealed class IdentityUserManagementService(
         EnsureSucceeded(roleResult, "назначение роли Operator");
     }
 
-    public async Task<bool> BlockAsync(Guid userId)
+    public async Task BlockAsync(Guid userId)
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
 
@@ -85,27 +85,26 @@ public sealed class IdentityUserManagementService(
         user.LockoutEnd = DateTimeOffset.MaxValue;
 
         var result = await userManager.UpdateSecurityStampAsync(user);
-
-        return result.Succeeded;
+        EnsureSucceeded(result, "блокировка пользователя");
     }
 
-    public async Task<bool> UnblockAsync(Guid userId)
+    public async Task UnblockAsync(Guid userId)
     {
         var user = await userManager.FindByIdAsync(userId.ToString());
+
         if (user is null)
         {
-            return false;
+            throw new UserNotFoundException(userId);
         }
 
         user.LockoutEnd = null;
         user.AccessFailedCount = 0;
 
-        var stampResult = await userManager.UpdateSecurityStampAsync(user);
-
-        return stampResult.Succeeded;
+        var result = await userManager.UpdateSecurityStampAsync(user);
+        EnsureSucceeded(result, "разблокировка пользователя");
     }
 
-    private static void EnsureSucceeded(IdentityResult result, string operation)
+    private void EnsureSucceeded(IdentityResult result, string operation)
     {
         if (result.Succeeded)
         {
@@ -118,5 +117,4 @@ public sealed class IdentityUserManagementService(
         throw new InvalidOperationException(
             $"Не удалось выполнить операцию '{operation}': {errors}");
     }
-
 }

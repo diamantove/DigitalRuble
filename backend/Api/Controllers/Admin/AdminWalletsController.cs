@@ -1,4 +1,4 @@
-using Api.Contracts.Wallets.Operator;
+using Api.Contracts.Wallets.Admin;
 using Application.Platform;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
