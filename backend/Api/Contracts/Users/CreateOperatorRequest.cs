@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations;
 namespace Api.Contracts.Users;
 
 public sealed record CreateOperatorRequest(
-    [property: Required]
-    [property: EmailAddress]
-    [property: StringLength(100)]
+    [param: Required]
+    [param: EmailAddress]
+    [param: StringLength(100)]
     string Email,
 
-    [property: Required]
+    [param: Required]
     string Password,
 
-    [property: Required]
-    [property: StringLength(100)]
+    [param: Required]
+    [param: StringLength(100)]
     string DisplayName);

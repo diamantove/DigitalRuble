@@ -10,6 +10,9 @@ builder.Services
     .AddInfrastructureServices(builder.Configuration)
     .AddApplicationServices();
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 var app = builder.Build();
 
 var applyMigrations = builder.Configuration.GetValue<bool>("Database:ApplyMigrations");

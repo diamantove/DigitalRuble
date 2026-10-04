@@ -24,8 +24,8 @@ public sealed class ClientRepository(IApplicationDbContext dbContext) : IClientR
     }
 
     public Task<bool> DigitalRubleParticipantIdExistsForAnotherClientAsync(
-        string mid,
         string digitalRubleParticipantId,
+        string mid,
         CancellationToken cancellationToken)
     {
         return dbContext.Clients
