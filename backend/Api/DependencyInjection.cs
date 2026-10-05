@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Api.Exceptions.Handlers;
 using Api.Middleware;
+using AspNet.Security.OAuth.VkId;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi;
 
@@ -70,6 +71,20 @@ public static class DependencyInjection
 
                     return Task.CompletedTask;
                 };
+            })
+            .AddVkId(options =>
+            {
+                options.ClientId = configuration["Authentication:VkId:ClientId"]
+                    ?? throw new InvalidOperationException(
+                        "Не задан Authentication:VkId:ClientId.");
+
+                options.ClientSecret = configuration["Authentication:VkId:ClientSecret"]
+                    ?? throw new InvalidOperationException(
+                        "Не задан Authentication:VkId:ClientSecret.");
+
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+
+                options.CallbackPath = "/signin-vkid";
             });
 
         services.AddAuthorization(options =>

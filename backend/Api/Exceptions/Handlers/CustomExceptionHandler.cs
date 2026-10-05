@@ -27,6 +27,12 @@ public sealed class CustomExceptionHandler(ILogger<CustomExceptionHandler> logge
                 exception.Message,
                 LogLevel.Information),
 
+            ExternalLoginException => (
+               StatusCodes.Status409Conflict,
+               "Ошибка внешней авторизации.",
+               exception.Message,
+               LogLevel.Information),
+
             UserAlreadyExistsException => (
                 StatusCodes.Status409Conflict,
                 "Пользователь уже существует.",

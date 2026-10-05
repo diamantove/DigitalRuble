@@ -1,8 +1,8 @@
 using Application.Abstractions.Users.Dto;
 
-namespace Application.Abstractions.Users;
+namespace Application.Abstractions.Auth;
 
-public interface IAuthenticationService
+public interface IUserAuthenticationService
 {
     Task<bool> SignInAsync(string email, string password);
 

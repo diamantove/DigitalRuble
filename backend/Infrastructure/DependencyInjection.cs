@@ -1,5 +1,6 @@
+using Application.Abstractions.Auth;
+using Application.Abstractions.Auth.ExternalLogin;
 using Application.Abstractions.Data;
-using Application.Abstractions.Users;
 using Infrastructure.Data;
 using Infrastructure.Identity;
 using Infrastructure.Repositories;
@@ -37,12 +38,12 @@ public static class DependencyInjection
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
+        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IWalletRepository, WalletRepository>();
-        services.AddScoped<IApplicationDbContext>(
-            provider => provider.GetRequiredService<ApplicationDbContext>());
-        services.AddScoped<IAuthenticationService, IdentityAuthenticationService>();
+        services.AddScoped<IUserAuthenticationService, IdentityAuthenticationService>();
         services.AddScoped<IUserManagementService, IdentityUserManagementService>();
+        services.AddScoped<IExternalLoginService, IdentityVkIdLoginService>();
 
         return services;
     }

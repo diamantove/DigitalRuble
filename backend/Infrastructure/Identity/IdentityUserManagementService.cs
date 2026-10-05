@@ -1,3 +1,4 @@
+using Application.Abstractions.Auth;
 using Application.Abstractions.Users;
 using Application.Abstractions.Users.Dto;
 using Application.Exceptions;

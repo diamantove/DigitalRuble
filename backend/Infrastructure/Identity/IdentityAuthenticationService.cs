@@ -1,3 +1,4 @@
+using Application.Abstractions.Auth;
 using Application.Abstractions.Users;
 using Application.Abstractions.Users.Dto;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +8,7 @@ namespace Infrastructure.Identity;
 public sealed class IdentityAuthenticationService(
     UserManager<CustomIdentityUser> userManager,
     SignInManager<CustomIdentityUser> signInManager)
-    : IAuthenticationService
+    : IUserAuthenticationService
 {
     public async Task<bool> SignInAsync(string email, string password)
     {
