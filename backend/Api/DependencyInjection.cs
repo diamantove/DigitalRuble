@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Api.Exceptions.Handlers;
 using Api.Middleware;
 using AspNet.Security.OAuth.VkId;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi;
 
@@ -17,6 +18,15 @@ public static class DependencyInjection
         IHostEnvironment environment,
         IConfiguration configuration)
     {
+        services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders =
+                // смотреть на заголовок X-Forwarded-Proto (X-Forwarded-Proto: https)
+                ForwardedHeaders.XForwardedProto |
+                // смотреть на заголовок X-Forwarded-Host (X-Forwarded-Host: site.ru).
+                ForwardedHeaders.XForwardedHost;
+        });
+
         var allowedOrigins = configuration
                 .GetSection("AllowedOrigins")
                 .Get<string[]>() ?? [];
@@ -165,6 +175,7 @@ public static class DependencyInjection
             });
         }
 
+        app.UseForwardedHeaders();
         app.UseExceptionHandler();
 
         if (app.Configuration.GetValue<bool>("HttpsRedirection:Enabled"))
