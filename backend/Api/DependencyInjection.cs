@@ -95,6 +95,15 @@ public static class DependencyInjection
                 options.SignInScheme = IdentityConstants.ExternalScheme;
 
                 options.CallbackPath = "/signin-vkid";
+
+                options.Events.OnRemoteFailure = context =>
+                {
+                    context.HandleResponse();
+
+                    context.Response.Redirect("/auth/external?error=vk-id-cancelled");
+
+                    return Task.CompletedTask;
+                };
             });
 
         services.AddAuthorization(options =>
