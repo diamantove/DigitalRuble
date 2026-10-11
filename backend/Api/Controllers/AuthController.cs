@@ -43,6 +43,28 @@ public sealed class AuthController(
         return NoContent();
     }
 
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<ActionResult<CurrentUserDto>> GetCurrentUser()
+    {
+        var user = await authenticationService.GetCurrentUserAsync(GetCurrentUserId());
+
+        if (user is null)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status404NotFound,
+                title: "Пользователь не найден.",
+                detail: "Не удалось найти текущего пользователя в системе."
+            );
+        }
+
+        return Ok(new CurrentUserResponse(
+            user.Id,
+            user.Email,
+            user.DisplayName,
+            user.Roles));
+    }
+
     /// <summary>
     /// Инициирует процесс привязки аккаунта VK ID к текущему авторизованному профилю.
     /// </summary>
