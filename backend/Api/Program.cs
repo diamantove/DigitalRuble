@@ -6,8 +6,8 @@ using Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddApiServices(builder.Environment, builder.Configuration)
     .AddInfrastructureServices(builder.Configuration)
+    .AddApiServices(builder.Environment, builder.Configuration)
     .AddApplicationServices();
 
 builder.Logging.ClearProviders();

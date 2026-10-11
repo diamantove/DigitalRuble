@@ -52,59 +52,55 @@ public static class DependencyInjection
                         allowIntegerValues: false));
             });
 
-        services
-            .AddAuthentication(options =>
+        var authentication = services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+        });
+
+        authentication.AddIdentityCookies();
+
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.Cookie.Name = "digitalrub.auth";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.Cookie.SecurePolicy = environment.IsDevelopment()
+                ? CookieSecurePolicy.SameAsRequest
+                : CookieSecurePolicy.Always;
+
+            options.Events.OnRedirectToLogin = context =>
             {
-                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-            })
-            .AddCookie(IdentityConstants.ApplicationScheme, options =>
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            };
+
+            options.Events.OnRedirectToAccessDenied = context =>
             {
-                options.Cookie.Name = "digitalrub.auth";
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SameSite = SameSiteMode.Lax;
-                options.Cookie.SecurePolicy = environment.IsDevelopment()
-                        ? CookieSecurePolicy.SameAsRequest
-                        : CookieSecurePolicy.Always;
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                return Task.CompletedTask;
+            };
+        });
 
-                options.Events.OnRedirectToLogin = context =>
-                {
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        authentication.AddVkId(options =>
+        {
+            options.ClientId = configuration["Authentication:VkId:ClientId"]
+                ?? throw new InvalidOperationException(
+                    "Не задан Authentication:VkId:ClientId.");
 
-                    return Task.CompletedTask;
-                };
+            options.ClientSecret = configuration["Authentication:VkId:ClientSecret"]
+                ?? throw new InvalidOperationException(
+                    "Не задан Authentication:VkId:ClientSecret.");
 
-                options.Events.OnRedirectToAccessDenied = context =>
-                {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            options.SignInScheme = IdentityConstants.ExternalScheme;
+            options.CallbackPath = "/signin-vkid";
+        });
 
-                    return Task.CompletedTask;
-                };
-            })
-            .AddVkId(options =>
-            {
-                options.ClientId = configuration["Authentication:VkId:ClientId"]
-                    ?? throw new InvalidOperationException(
-                        "Не задан Authentication:VkId:ClientId.");
-
-                options.ClientSecret = configuration["Authentication:VkId:ClientSecret"]
-                    ?? throw new InvalidOperationException(
-                        "Не задан Authentication:VkId:ClientSecret.");
-
-                options.SignInScheme = IdentityConstants.ExternalScheme;
-
-                options.CallbackPath = "/signin-vkid";
-
-                options.Events.OnRemoteFailure = context =>
-                {
-                    context.HandleResponse();
-
-                    context.Response.Redirect("/auth/external?error=vk-id-cancelled");
-
-                    return Task.CompletedTask;
-                };
-            });
+        services.Configure<SecurityStampValidatorOptions>(options =>
+        {
+            options.ValidationInterval = TimeSpan.FromMinutes(1);
+        });
 
         services.AddAuthorization(options =>
         {
