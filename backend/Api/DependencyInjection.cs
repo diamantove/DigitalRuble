@@ -25,6 +25,10 @@ public static class DependencyInjection
                 ForwardedHeaders.XForwardedProto |
                 // смотреть на заголовок X-Forwarded-Host (X-Forwarded-Host: site.ru).
                 ForwardedHeaders.XForwardedHost;
+
+            // очищаем списки известных прокси, чтобы доверять всем
+            options.KnownIPNetworks.Clear();
+            options.KnownProxies.Clear();
         });
 
         var allowedOrigins = configuration
