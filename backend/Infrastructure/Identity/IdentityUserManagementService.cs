@@ -1,41 +1,46 @@
 using Application.Abstractions.Auth;
-using Application.Abstractions.Users;
+using Application.Abstractions.Data;
 using Application.Abstractions.Users.Dto;
 using Application.Exceptions;
+using Infrastructure.Data;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 public sealed class IdentityUserManagementService(
+        ApplicationDbContext dbContext,
         UserManager<CustomIdentityUser> userManager)
     : IUserManagementService
 {
     public async Task<IReadOnlyList<AdminUserListItemDto>> GetUsersAsync(
         CancellationToken cancellationToken)
     {
-        var users = await userManager.Users
+        var rows = await dbContext.Users
+            .AsNoTracking()
             .OrderBy(user => user.Email)
+            .Select(user => new
+            {
+                user.Id,
+                user.Email,
+                user.DisplayName,
+                user.LockoutEnd,
+                Roles = dbContext.Set<IdentityUserRole<Guid>>()
+                    .Where(userRole => userRole.UserId == user.Id)
+                    .Join(dbContext.Roles,
+                        userRole => userRole.RoleId,
+                        role => role.Id,
+                        (_, role) => role.Name)
+                    .ToList()
+            })
             .ToListAsync(cancellationToken);
 
-        var result = new List<AdminUserListItemDto>();
-
-        foreach (var user in users)
-        {
-            var roles = await userManager.GetRolesAsync(user);
-
-            var isBlocked =
-                user.LockoutEnd.HasValue &&
-                user.LockoutEnd > DateTimeOffset.UtcNow;
-
-            result.Add(new AdminUserListItemDto(
-                user.Id,
-                user.Email!,
-                user.DisplayName,
-                roles.ToArray(),
-                isBlocked));
-        }
-
-        return result;
+        return rows.Select(row => new AdminUserListItemDto(
+                row.Id,
+                row.Email!,
+                row.DisplayName,
+                row.Roles.ToArray()!,
+                row.LockoutEnd is not null && row.LockoutEnd > DateTimeOffset.UtcNow))
+            .ToList();
     }
 
     public async Task CreateOperatorAsync(
