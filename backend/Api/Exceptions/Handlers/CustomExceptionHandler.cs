@@ -15,6 +15,12 @@ public sealed class CustomExceptionHandler(ILogger<CustomExceptionHandler> logge
     {
         var (statusCode, title, detail, logLevel) = exception switch
         {
+            UnauthorizedException => (
+                StatusCodes.Status401Unauthorized,
+                "Требуется вход в систему.",
+                "Сессия недействительна, выполните вход повторно.",
+                LogLevel.Warning),
+
             ForbiddenException => (
                 StatusCodes.Status403Forbidden,
                 "Доступ запрещен.",

@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Api.Contracts.Auth;
+using Api.Exceptions;
 using Application.Abstractions.Auth;
 using Application.Abstractions.Auth.ExternalLogin;
 using Application.Abstractions.Users.Dto;
@@ -191,7 +192,7 @@ public sealed class AuthController(
 
         if (!Guid.TryParse(value, out var userId))
         {
-            throw new UnauthorizedAccessException();
+            throw new UnauthorizedException("Пользователь не авторизован.");
         }
 
         return userId;

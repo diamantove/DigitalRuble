@@ -1,4 +1,5 @@
 using Api.Contracts.Users;
+using Application.Abstractions.Auth;
 using Application.Abstractions.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
