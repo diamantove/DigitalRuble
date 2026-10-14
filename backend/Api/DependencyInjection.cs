@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Api.Exceptions.Handlers;
 using Api.Middleware;
 using AspNet.Security.OAuth.VkId;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi;
@@ -111,13 +112,13 @@ public static class DependencyInjection
             options.AddPolicy("OperatorReadAccess", policy =>
             {
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole("Operator", "Admin");
+                policy.RequireRole(IdentityRoles.Operator, IdentityRoles.Admin);
             });
 
             options.AddPolicy("AdminAccess", policy =>
             {
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole("Admin");
+                policy.RequireRole(IdentityRoles.Admin);
             });
         });
 
