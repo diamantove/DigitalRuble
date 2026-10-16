@@ -130,3 +130,21 @@
   align-items: center;
   text-decoration: none;
 }
+
+.header-user {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  line-height: 1.2;
+}
+
+.header-user-name {
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.header-user-role {
+  color: var(--text-muted);
+  font-size: 11px;
+}
