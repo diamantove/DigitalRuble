@@ -12,7 +12,7 @@ type ProblemDetails = {
   errors?: Record<string, string[]>
 }
 
-const apiUrl = import.meta.env.VITE_API_URL
+export const apiUrl = import.meta.env.VITE_API_URL
 
 if (!apiUrl) {
   throw new Error('Не задана переменная VITE_API_URL.')
@@ -65,7 +65,7 @@ function getErrorMessage(response: Response, body: string): string {
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   try {
-    const response = await fetch(`${apiUrl}${path}`, init)
+    const response = await fetch(`${apiUrl}${path}`, { ...init, credentials: 'include' })
     const body = await response.text()
 
     if (!response.ok) {
@@ -112,7 +112,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 function requestWithBody<T>(
-    method: 'PUT' | 'PATCH',
+    method: 'POST' | 'PUT' | 'PATCH',
     path: string,
     body: unknown,
 ) {
@@ -126,9 +126,13 @@ function requestWithBody<T>(
 }
 
 export const apiClient = {
-    get: <T>(path: string) => request<T>(path),
+  get: <T>(path: string) => request<T>(path),
 
-    put: <T>(path: string, body: unknown) => requestWithBody<T>('PUT', path, body),
+  post: <T>(path: string, body: unknown) => requestWithBody<T>('POST', path, body),
 
-    patch: <T>(path: string, body: unknown) => requestWithBody<T>('PATCH', path, body),
+  put: <T>(path: string, body: unknown) => requestWithBody<T>('PUT', path, body),
+
+  patch: <T>(path: string, body: unknown) => requestWithBody<T>('PATCH', path, body),
+
+  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 }

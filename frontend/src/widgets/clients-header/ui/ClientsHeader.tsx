@@ -1,4 +1,5 @@
 import { RefreshCw, WalletCards } from 'lucide-react'
+import { LogoutButton } from '../../../features/auth/ui/LogoutButton'
 
 type ClientsHeaderProps = {
     isRefreshing: boolean
@@ -17,6 +18,8 @@ export function ClientsHeader({isRefreshing, onRefresh}: ClientsHeaderProps) {
             </div>
 
             <div className="header-meta">
+                <LogoutButton />
+                
                 <button
                     className="icon-btn"
                     type="button"
