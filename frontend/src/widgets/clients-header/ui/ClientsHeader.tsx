@@ -1,7 +1,7 @@
 import { RefreshCw, WalletCards } from 'lucide-react'
 import { LogoutButton } from '../../../features/auth/ui/LogoutButton'
 import { useSessionQuery } from '../../../entities/session/api/useSessionQuery'
-import { getRoleLabel } from '../../../entities/session/lib/getRoleLabes'
+import { getRoleLabel } from '../../../entities/session/lib/getRoleLabels'
 
 type ClientsHeaderProps = {
     isRefreshing: boolean
