@@ -1,13 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using Domain.Wallets;
 
-namespace Api.Contracts.Wallets.Admin;
+namespace Api.Contracts.Wallets.Operator;
 
-public sealed record SyncAdminWalletRequest(
-    [param: Required]
-    [param: StringLength(100)]
-    string Mid,
-
+public sealed record SyncWalletRequest(
     [param: Required]
     [param: StringLength(100)]
     string WalletCode,

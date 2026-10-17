@@ -1,7 +1,7 @@
 using Domain.Wallets;
 
-namespace Application.Platform;
+namespace Application.Platform.Dto;
 
-public record UpdateWalletRequest(
+public record UpdateWalletDto(
     WalletStatus? Status,
     string? AccountNumber);

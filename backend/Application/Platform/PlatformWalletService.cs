@@ -1,7 +1,7 @@
 using Application.Abstractions.Data;
 using Application.Exceptions;
+using Application.Platform.Dto;
 using Domain.Common;
-using Domain.Wallets;
 
 namespace Application.Platform;
 
@@ -11,16 +11,17 @@ public sealed class PlatformWalletService(
         IApplicationDbContext dbContext)
 {
     public async Task SyncAsync(
-        SyncWalletRequest request,
+        string mid,
+        SyncWalletDto walletDto,
         CancellationToken cancellationToken)
     {
         var client = await clientRepository.GetByMidWithWalletsAsync(
-            request.Mid,
+            mid,
             cancellationToken);
 
         if (client is null)
         {
-            throw new NotFoundException($"Клиент с MID '{request.Mid}' не найден.");
+            throw new NotFoundException($"Клиент с MID '{mid}' не найден.");
         }
 
         var activeWallet = client.Wallets
@@ -29,41 +30,41 @@ public sealed class PlatformWalletService(
         if (activeWallet is null)
         {
             var walletCodeExists = await walletRepository.CodeExistsAsync(
-                request.WalletCode,
+                walletDto.WalletCode,
                 cancellationToken);
 
             if (walletCodeExists)
-                throw new WalletException($"Кошелёк с кодом '{request.WalletCode}' уже существует.");
+                throw new WalletException($"Кошелёк с кодом '{walletDto.WalletCode}' уже существует.");
 
-            if (request.AccountNumber is not null)
+            if (walletDto.AccountNumber is not null)
             {
                 await EnsureAccountNumberIsAvailableForWalletAsync(
-                    request.AccountNumber,
-                    request.WalletCode,
+                    walletDto.AccountNumber,
+                    walletDto.WalletCode,
                     cancellationToken);
             }
 
             client.AddWallet(
-                request.WalletCode,
-                request.Status,
-                request.AccountNumber);
+                walletDto.WalletCode,
+                walletDto.Status,
+                walletDto.AccountNumber);
         }
         else
         {
-            if (activeWallet.Code != request.WalletCode)
+            if (activeWallet.Code != walletDto.WalletCode)
                 throw new WalletException("Переданный код кошелька не совпадает с кодом активного кошелька.");
 
-            if (activeWallet.Status != request.Status)
-                activeWallet.ChangeStatus(request.Status);
+            if (activeWallet.Status != walletDto.Status)
+                activeWallet.ChangeStatus(walletDto.Status);
 
-            if (request.AccountNumber is not null)
+            if (walletDto.AccountNumber is not null)
             {
                 await EnsureAccountNumberIsAvailableForWalletAsync(
-                    request.AccountNumber,
+                    walletDto.AccountNumber,
                     activeWallet.Code,
                     cancellationToken);
 
-                activeWallet.SetAccountNumber(request.AccountNumber);
+                activeWallet.SetAccountNumber(walletDto.AccountNumber);
             }
         }
 
@@ -72,7 +73,7 @@ public sealed class PlatformWalletService(
 
     public async Task UpdateAsync(
         string walletCode,
-        UpdateWalletRequest request,
+        UpdateWalletDto request,
         CancellationToken cancellationToken)
     {
         var wallet = await walletRepository.GetByCodeAsync(

@@ -1,9 +1,8 @@
 using Domain.Wallets;
 
-namespace Application.Platform;
+namespace Application.Platform.Dto;
 
-public record SyncWalletRequest(
-    string Mid,
+public record SyncWalletDto(
     string WalletCode,
     WalletStatus Status,
     string? AccountNumber);

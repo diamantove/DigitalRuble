@@ -1,13 +1,14 @@
 using Api.Contracts.Wallets.Platform;
 using Application.Platform;
+using Application.Platform.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.Platform;
 
-
 [ApiController]
 [Route("api/platform/wallets")]
-public sealed class PlatformWalletsController(PlatformWalletService platformWalletService) : ControllerBase
+public sealed class PlatformWalletsController(PlatformWalletService platformWalletService)
+    : ControllerBase
 {
     [HttpPut]
     public async Task<IActionResult> Sync(
@@ -15,8 +16,8 @@ public sealed class PlatformWalletsController(PlatformWalletService platformWall
         CancellationToken cancellationToken)
     {
         await platformWalletService.SyncAsync(
-            new SyncWalletRequest(
-                request.Mid,
+            request.Mid,
+            new SyncWalletDto(
                 request.WalletCode,
                 request.Status!.Value,
                 request.AccountNumber),
@@ -33,7 +34,7 @@ public sealed class PlatformWalletsController(PlatformWalletService platformWall
     {
         await platformWalletService.UpdateAsync(
             walletCode,
-            new UpdateWalletRequest(
+            new UpdateWalletDto(
                 request.Status,
                 request.AccountNumber),
             cancellationToken);

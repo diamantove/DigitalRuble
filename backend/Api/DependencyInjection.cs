@@ -88,15 +88,22 @@ public static class DependencyInjection
             };
         });
 
+        var vkIdClientId = configuration["Authentication:VkId:ClientId"];
+        if (string.IsNullOrWhiteSpace(vkIdClientId))
+        {
+            throw new InvalidOperationException("Не задан Authentication:VkId:ClientId.");
+        }
+
+        var vkIdClientSecret = configuration["Authentication:VkId:ClientSecret"];
+        if (string.IsNullOrWhiteSpace(vkIdClientSecret))
+        {
+            throw new InvalidOperationException("Не задан Authentication:VkId:ClientSecret.");
+        }
+
         authentication.AddVkId(options =>
         {
-            options.ClientId = configuration["Authentication:VkId:ClientId"]
-                ?? throw new InvalidOperationException(
-                    "Не задан Authentication:VkId:ClientId.");
-
-            options.ClientSecret = configuration["Authentication:VkId:ClientSecret"]
-                ?? throw new InvalidOperationException(
-                    "Не задан Authentication:VkId:ClientSecret.");
+            options.ClientId = vkIdClientId;
+            options.ClientSecret = vkIdClientSecret;
 
             options.SignInScheme = IdentityConstants.ExternalScheme;
             options.CallbackPath = "/signin-vkid";
@@ -109,7 +116,7 @@ public static class DependencyInjection
 
         services.AddAuthorization(options =>
         {
-            options.AddPolicy("OperatorReadAccess", policy =>
+            options.AddPolicy("OperatorAccess", policy =>
             {
                 policy.RequireAuthenticatedUser();
                 policy.RequireRole(IdentityRoles.Operator, IdentityRoles.Admin);

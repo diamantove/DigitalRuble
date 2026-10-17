@@ -4,7 +4,7 @@ using Application.Abstractions.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers;
+namespace Api.Controllers.Admin;
 
 [ApiController]
 [Route("api/admin/users")]
