@@ -15,6 +15,12 @@ public sealed class CustomExceptionHandler(ILogger<CustomExceptionHandler> logge
     {
         var (statusCode, title, detail, logLevel) = exception switch
         {
+            ValidationException => (
+                StatusCodes.Status400BadRequest,
+                "Ошибка валидации.",
+                exception.Message,  
+                LogLevel.Information),
+
             UnauthorizedException => (
                 StatusCodes.Status401Unauthorized,
                 "Требуется вход в систему.",

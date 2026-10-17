@@ -1,11 +1,11 @@
 using Application.Abstractions.Auth;
-using Application.Abstractions.Data;
 using Application.Abstractions.Users.Dto;
 using Application.Exceptions;
 using Infrastructure.Data;
-using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+namespace Infrastructure.Identity;
 
 public sealed class IdentityUserManagementService(
         ApplicationDbContext dbContext,
@@ -65,7 +65,7 @@ public sealed class IdentityUserManagementService(
         };
 
         var createResult = await userManager.CreateAsync(user, password);
-        EnsureSucceeded(createResult, "создание пользователя");
+        EnsureUserDataValid(createResult);
 
         var roleResult = await userManager.AddToRoleAsync(user, IdentityRoles.Operator);
         EnsureSucceeded(roleResult, "назначение роли Operator");
@@ -108,6 +108,18 @@ public sealed class IdentityUserManagementService(
 
         var result = await userManager.UpdateSecurityStampAsync(user);
         EnsureSucceeded(result, "разблокировка пользователя");
+    }
+
+    private static void EnsureUserDataValid(IdentityResult result)
+    {
+        if (result.Succeeded)
+        {
+            return;
+        }
+
+        var errors = string.Join("; ", result.Errors.Select(error => error.Description));
+
+        throw new ValidationException($"Не удалось создать оператора: {errors}");
     }
 
     private void EnsureSucceeded(IdentityResult result, string operation)
