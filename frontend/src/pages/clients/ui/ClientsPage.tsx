@@ -55,6 +55,10 @@ export function ClientsPage() {
 
     async function handleRefreshClick() {
         await clientsQuery.refetch()
+
+        if (selectedClient) {
+            await walletsQuery.refetch()
+        }
     }
 
     function handleClientSelect(client: Client) {
@@ -64,30 +68,32 @@ export function ClientsPage() {
     function handleParticipantIdAssigned() {
         
         void queryClient.invalidateQueries({
-            queryKey: clientsQueryKey,
+            queryKey: clientsQueryKey,  
         })
 
         closeModal()
         setToastMessage('ИД цифрого рубля сохранён.')
     }
 
-    function handleWalletSynced() {
-        if (selectedClientMid) {
+    function invalidateSelectedWallets() {
+        const mid = selectedClient?.mid
+
+        if (mid) {
             void queryClient.invalidateQueries({
-                queryKey: walletsQueryKey(selectedClientMid),
+                queryKey: walletsQueryKey(mid),
             })
         }
+    }
+
+    function handleWalletSynced() {
+        invalidateSelectedWallets()
 
         closeModal()
         setToastMessage('Кошелек создан.')
     }
 
     function handleWalletUpdated() {
-        if (selectedClientMid) {
-            void queryClient.invalidateQueries({
-                queryKey: walletsQueryKey(selectedClientMid),
-            })
-        }
+        invalidateSelectedWallets()
 
         closeModal()
         setToastMessage('Кошелек обновлён.')
@@ -132,7 +138,7 @@ export function ClientsPage() {
     return (
         <div className="page">
             <ClientsHeader
-                isRefreshing={isLoading}
+                isRefreshing={clientsQuery.isFetching}
                 onRefresh={() => void handleRefreshClick()}
             />
 

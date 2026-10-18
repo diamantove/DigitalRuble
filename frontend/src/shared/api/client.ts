@@ -93,10 +93,15 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
         return data as T
 
-        } catch {
-        throw new ApiError(
+        } catch (error) {
+          if (error instanceof ApiError) {
+            throw error
+          }
+
+          throw new ApiError(
             `Сервер вернул некорректный JSON (HTTP ${response.status}).`,
             response.status)
+        
     }
   } catch (error) {
     if (error instanceof ApiError) {
