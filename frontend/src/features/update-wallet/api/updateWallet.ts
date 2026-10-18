@@ -7,5 +7,5 @@ type UpdateWalletRequest = {
 }
 
 export function updateWallet(walletCode: string, request: UpdateWalletRequest) {
-    return apiClient.patch<void>(`/platform/wallets/${encodeURIComponent(walletCode)}`, request)
+    return apiClient.patch<void>(`/operator/wallets/${encodeURIComponent(walletCode)}`, request)
 }

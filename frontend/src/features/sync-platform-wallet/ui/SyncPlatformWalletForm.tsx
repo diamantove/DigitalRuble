@@ -40,19 +40,15 @@ export function SyncPlatformWalletForm({ client, onSynced, onCancel }: SyncPlatf
         }
 
         const request: SyncPlatformWalletRequest = {
-            mid: client.mid,
             walletCode: trimmedWalletCode,
             status,
-        }
-
-        if (trimmedAccountNumber) {
-            request.accountNumber = trimmedAccountNumber
+            accountNumber: trimmedAccountNumber || undefined,
         }
 
         try {
             setIsSubmitting(true)
 
-            await syncPlatformWallet(request)
+            await syncPlatformWallet(client.mid, request)
             await onSynced()
 
             setWalletCode('')

@@ -9,5 +9,5 @@ export function assignParticipantId(mid: string, digitalRubleParticipantId: stri
         digitalRubleParticipantId,
     }
 
-    return apiClient.put<void>(`/clients/${encodeURIComponent(mid)}`, request)
+    return apiClient.put<void>(`/operator/clients/${encodeURIComponent(mid)}/participant-id`, request)
 }

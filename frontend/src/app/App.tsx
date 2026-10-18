@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import './styles/App.css'
 
@@ -6,8 +6,34 @@ import { AuthExternalPage } from '../pages/auth-external/ui/AuthExternalPage'
 import { ClientsPage } from '../pages/clients/ui/ClientsPage'
 import { LoginPage } from '../pages/login/ui/LoginPage'
 import { RequireAuth } from './router/RequireAuth'
+import { ApiError } from '../shared/api/client'
+import { sessionQueryKey } from '../entities/session/api/useSessionQuery'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error) => {
+        if (error instanceof ApiError) {
+          return false
+        }
+
+        return failureCount < 2
+      },
+    },
+  },
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      if (query.queryKey[0] === sessionQueryKey[0]) {
+        return
+      }
+
+      if (error instanceof ApiError && error.status === 401) {
+        queryClient.clear()
+        window.location.assign('/login')
+      }
+    },
+  }),
+})
 
 function App() {
   return (

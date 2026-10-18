@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query';
 type ExternalAuthOutcome =
     | { kind: 'signed-in' }
     | { kind: 'linked' }
-    | { kind: 'error'; message: string; showLogin: boolean }
+    | { kind: 'error'; message: string; }
 
 function resolveOutcome(
     result: string | null,
@@ -25,7 +25,6 @@ function resolveOutcome(
         return {
             kind: 'error',
             message: 'Этот VK ID не привязан ни к одному аккаунту. Войдите по почте и привяжите VK ID в профиле.',
-            showLogin: true,
         }
     }
 
@@ -33,7 +32,6 @@ function resolveOutcome(
         return {
             kind: 'error',
             message: 'Аккаунт заблокирован. Обратитесь к администратору.',
-            showLogin: true,
         }
     }
 
@@ -41,7 +39,6 @@ function resolveOutcome(
         return {
             kind: 'error',
             message: 'Не удалось войти через VK ID. Попробуйте ещё раз или войдите по почте.',
-            showLogin: true,
         }
     }
 
