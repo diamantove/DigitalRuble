@@ -1,5 +1,5 @@
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import './styles/App.css'
 
 import { AuthExternalPage } from '../pages/auth-external/ui/AuthExternalPage'
@@ -8,6 +8,9 @@ import { LoginPage } from '../pages/login/ui/LoginPage'
 import { RequireAuth } from './router/RequireAuth'
 import { ApiError } from '../shared/api/client'
 import { sessionQueryKey } from '../entities/session/api/useSessionQuery'
+import { RequireRole } from './router/RequireRole'
+import { AdminUsersPage } from '../pages/admin-users/ui/AdminUsersPage'
+import { AppHeader } from '../widgets/app-header/ui/AppHeader'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,6 +38,15 @@ const queryClient = new QueryClient({
   }),
 })
 
+function AppLayout() {
+  return (
+    <>
+      <AppHeader />
+      <Outlet />
+    </>
+  )
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -42,14 +54,19 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/external" element={<AuthExternalPage />} />
-          <Route
-            path="/"
-            element={
-              <RequireAuth>
-                <ClientsPage />
-              </RequireAuth>
-            }
-          />
+
+          <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
+            <Route path="/" element={<ClientsPage />} />
+            <Route
+              path="/admin/users"
+              element={
+                <RequireRole role="Admin">
+                  <AdminUsersPage />
+                </RequireRole>
+              }
+            />
+          </Route>
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

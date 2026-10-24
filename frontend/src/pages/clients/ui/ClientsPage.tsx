@@ -11,12 +11,12 @@ import { UpdateWalletModal } from '../../../features/update-wallet/ui'
 
 import { Toast } from '../../../shared/ui/toast'
 import { ClientSummary } from '../../../widgets/client-summary'
-import { ClientsHeader } from '../../../widgets/clients-header'
 import { ClientsSidebar } from '../../../widgets/clients-sidebar'
 import { WalletsTable } from '../../../widgets/wallets-table'
 import { useClientsQuery } from '../../../entities/client/api/useClientsQuery'
 import { useWalletsQuery } from '../../../entities/wallet/api/useWalletsQuery'
 import { useQueryClient } from '@tanstack/react-query'
+import { RefreshCw } from 'lucide-react'
 
 type ModalState =
     | { type: 'none' }
@@ -137,10 +137,33 @@ export function ClientsPage() {
 
     return (
         <div className="page">
-            <ClientsHeader
-                isRefreshing={clientsQuery.isFetching}
-                onRefresh={() => void handleRefreshClick()}
-            />
+            <div className="clients-page-heading">
+                <div>
+                    <p className="eyebrow">Рабочее пространство</p>
+                    <h1 className="wallets-title">Клиенты и кошельки</h1>
+                    <p className="section-subtitle">
+                        Поиск клиентов и управление их цифровыми кошельками.
+                    </p>
+                </div>
+
+                <button
+                    className="icon-btn"
+                    type="button"
+                    aria-label="Обновить данные клиентов и кошельков"
+                    title="Обновить"
+                    disabled={clientsQuery.isFetching || walletsQuery.isFetching}
+                    onClick={() => void handleRefreshClick()}
+                >
+                    <RefreshCw
+                        size={20}
+                        className={
+                            clientsQuery.isFetching || walletsQuery.isFetching
+                                ? 'icon-spin'
+                                : undefined
+                        }
+                    />
+                </button>
+            </div>
 
             <div className="layout">
                 <ClientsSidebar
