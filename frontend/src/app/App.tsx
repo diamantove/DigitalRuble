@@ -1,4 +1,4 @@
-import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import './styles/App.css'
 
@@ -11,6 +11,11 @@ import { sessionQueryKey } from '../entities/session/api/useSessionQuery'
 import { RequireRole } from './router/RequireRole'
 import { AdminUsersPage } from '../pages/admin-users/ui/AdminUsersPage'
 import { AppHeader } from '../widgets/app-header/ui/AppHeader'
+
+const handleUnauthorized = () => {
+  queryClient.clear()
+  window.location.assign('/login')
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,8 +36,14 @@ const queryClient = new QueryClient({
       }
 
       if (error instanceof ApiError && error.status === 401) {
-        queryClient.clear()
-        window.location.assign('/login')
+        handleUnauthorized()
+      }
+    },
+  }),
+  mutationCache: new MutationCache({
+    onError: (error) => {
+      if (error instanceof ApiError && error.status === 401) {
+        handleUnauthorized()
       }
     },
   }),

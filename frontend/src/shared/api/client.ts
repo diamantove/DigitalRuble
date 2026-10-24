@@ -69,6 +69,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const body = await response.text()
 
     if (!response.ok) {
+      if (response.status === 401 && path !== '/auth/login' && window.location.pathname !== '/login') {
+        window.location.assign('/login')
+      }
       throw new ApiError(getErrorMessage(response, body), response.status)
     }
 
