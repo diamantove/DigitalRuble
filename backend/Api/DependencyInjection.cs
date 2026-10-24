@@ -111,7 +111,7 @@ public static class DependencyInjection
 
         services.Configure<SecurityStampValidatorOptions>(options =>
         {
-            options.ValidationInterval = TimeSpan.FromMinutes(1);
+            options.ValidationInterval = TimeSpan.Zero;
         });
 
         services.AddAuthorization(options =>
