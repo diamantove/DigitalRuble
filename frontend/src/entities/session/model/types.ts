@@ -5,4 +5,5 @@ export type CurrentUser = {
     email: string
     displayName: string
     roles: UserRole[]
+    isVkIdLinked: boolean
 }
