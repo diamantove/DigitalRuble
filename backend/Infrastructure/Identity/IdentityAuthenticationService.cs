@@ -43,11 +43,14 @@ public sealed class IdentityAuthenticationService(
         }
 
         var roles = await userManager.GetRolesAsync(user);
+        var logins = await userManager.GetLoginsAsync(user);
+        var isVkLinked = logins.Any(login => login.LoginProvider == "VK");
 
         return new CurrentUserDto(
             user.Id,
             user.Email ?? string.Empty,
             user.DisplayName,
-            roles.ToArray());
+            roles.ToArray(),
+            isVkLinked);
     }
 }
