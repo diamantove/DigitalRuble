@@ -5,4 +5,4 @@ public sealed record CurrentUserResponse(
     string Email,
     string DisplayName,
     IReadOnlyList<string> Roles,
-    bool IsVkLinked);
+    bool IsVkIdLinked);

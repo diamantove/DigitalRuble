@@ -5,4 +5,4 @@ public sealed record CurrentUserDto(
     string Email,
     string DisplayName, 
     string[] Roles,
-    bool isVkLinked);
+    bool isVkIdLinked);

@@ -64,7 +64,7 @@ public sealed class AuthController(
             user.Email,
             user.DisplayName,
             user.Roles,
-            user.isVkLinked));
+            user.isVkIdLinked));
     }
 
     /// <summary>
